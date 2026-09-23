@@ -1,12 +1,9 @@
 <!doctype html>
+
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>パチッとモンスター</title>
-
-<style>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>パチッとモンスター</title><style>
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
@@ -167,10 +164,13 @@ button{
   left:0;
   right:0;
   bottom:150px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   overflow:hidden;
+  padding:4px;
 }
 
 .mapGrid{
@@ -178,19 +178,28 @@ button{
   gap:1px;
   background:#333;
   border:4px solid #333;
-  max-width:96vw;
-  max-height:calc(100vh - 220px);
-  aspect-ratio:1;
+
+  /*
+    マップが画面からはみ出さないようにする
+  */
+  width:min(96vw,calc(100vh - 210px));
+  height:min(96vw,calc(100vh - 210px));
+
+  aspect-ratio:1 / 1;
 }
 
 .tile{
-  width:min(8vw,48px);
-  height:min(8vw,48px);
+  min-width:0;
+  min-height:0;
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:min(6vw,32px);
+
+  font-size:clamp(14px,4vw,30px);
+
   user-select:none;
+  overflow:hidden;
 }
 
 .tile.grass{
@@ -233,10 +242,14 @@ button{
   background:#d7bd82;
 }
 
-.playerIcon{
-  font-size:min(6vw,30px);
+.mapPlayerIcon{
+  font-size:clamp(18px,5vw,30px);
   z-index:2;
 }
+
+/* =========================
+   メッセージ
+========================= */
 
 #message{
   position:absolute;
@@ -244,12 +257,16 @@ button{
   right:8px;
   bottom:155px;
   min-height:38px;
+
   background:rgba(0,0,0,.78);
   border:2px solid #fff;
   border-radius:8px;
+
   padding:8px 10px;
+
   z-index:10;
   font-size:14px;
+
   pointer-events:none;
 }
 
@@ -262,9 +279,12 @@ button{
   left:0;
   right:0;
   bottom:0;
+
   height:150px;
+
   background:#222;
   border-top:4px solid #111;
+
   z-index:30;
 }
 
@@ -272,32 +292,54 @@ button{
   position:absolute;
   left:15px;
   bottom:14px;
+
   width:135px;
   height:120px;
 }
 
 .dpad button{
   position:absolute;
+
   width:45px;
   height:40px;
+
   border:2px solid #111;
   border-radius:7px;
+
   background:#ddd;
   color:#111;
+
   font-size:22px;
   font-weight:bold;
 }
 
-#up{left:45px;top:0}
-#left{left:0;top:40px}
-#right{right:0;top:40px}
-#down{left:45px;bottom:0}
+#up{
+  left:45px;
+  top:0;
+}
+
+#left{
+  left:0;
+  top:40px;
+}
+
+#right{
+  right:0;
+  top:40px;
+}
+
+#down{
+  left:45px;
+  bottom:0;
+}
 
 .menuButtons{
   position:absolute;
   right:8px;
   bottom:8px;
+
   width:calc(100% - 165px);
+
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:5px;
@@ -305,25 +347,32 @@ button{
 
 .menuButtons button{
   padding:8px 4px;
+
   border:2px solid #111;
   border-radius:7px;
+
   background:#eee;
   color:#111;
+
   font-weight:bold;
 }
 
 /* =========================
-   メニュー
+   オーバーレイ
 ========================= */
 
 .overlay{
   position:absolute;
   inset:0;
+
   background:rgba(0,0,0,.75);
+
   z-index:100;
+
   display:none;
   align-items:center;
   justify-content:center;
+
   padding:15px;
 }
 
@@ -334,11 +383,15 @@ button{
 .panel{
   width:min(700px,96vw);
   max-height:92vh;
+
   overflow:auto;
+
   background:#f5f5f5;
   color:#222;
+
   border:4px solid #222;
   border-radius:14px;
+
   padding:15px;
 }
 
@@ -349,16 +402,21 @@ button{
 .panel button{
   border:2px solid #222;
   border-radius:8px;
+
   background:#fff;
+
   padding:9px;
   margin:3px;
+
   cursor:pointer;
 }
 
 .closeBtn{
   width:100%;
+
   background:#333 !important;
   color:#fff !important;
+
   margin-top:10px !important;
 }
 
@@ -375,7 +433,9 @@ button{
 .monsterCard{
   border:3px solid #333;
   border-radius:10px;
+
   padding:8px;
+
   background:#fff;
 }
 
@@ -391,10 +451,13 @@ button{
 
 .hpbar{
   height:10px;
+
   background:#ccc;
   border:1px solid #333;
   border-radius:5px;
+
   overflow:hidden;
+
   margin-top:4px;
 }
 
@@ -420,8 +483,11 @@ button{
 .dexItem{
   border:2px solid #555;
   border-radius:8px;
+
   padding:7px;
+
   background:#fff;
+
   min-height:65px;
 }
 
@@ -436,7 +502,9 @@ button{
 .boxTabs{
   display:grid;
   grid-template-columns:repeat(5,1fr);
+
   gap:3px;
+
   margin-bottom:8px;
 }
 
@@ -448,19 +516,26 @@ button{
 .boxGrid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
+
   gap:5px;
 }
 
 .boxSlot{
   min-height:70px;
+
   border:2px solid #777;
   border-radius:7px;
+
   background:#ddd;
+
   display:flex;
   flex-direction:column;
+
   align-items:center;
   justify-content:center;
+
   text-align:center;
+
   cursor:pointer;
 }
 
@@ -479,99 +554,147 @@ button{
 
 #battleScreen{
   background:
-    linear-gradient(#a7d8f2 0 45%,#82c56b 45% 100%);
+    linear-gradient(
+      #a7d8f2 0 45%,
+      #82c56b 45% 100%
+    );
 }
 
-
-  .battleTop{
+/*
+  野生パチモン情報
+*/
+.battleTop{
   position:absolute;
+
   top:24%;
   right:5%;
+
   width:42%;
+
   background:#fff;
   color:#222;
+
   border:3px solid #222;
   border-radius:10px;
+
   padding:8px;
+
   z-index:10;
 }
 
+/*
+  野生パチモン本体
+*/
 #wildIcon{
   position:absolute;
+
   top:24%;
-  right:50%;
+  right:48%;
+
   width:auto;
   height:auto;
+
   font-size:80px;
+
   z-index:10;
+
   display:block;
-  visibility:visible;
-  opacity:1;
 }
 
+/*
+  プレイヤー側情報
+*/
 .battleBottom{
   position:absolute;
+
   left:12px;
   bottom:260px;
+
   width:48%;
+
   background:#fff;
   color:#222;
+
   border:3px solid #222;
   border-radius:10px;
+
   padding:8px;
+
   z-index:15;
 }
+
+/*
+  戦闘中のパチモン画像
+*/
 .battleMonster{
   text-align:center;
   font-size:80px;
-  position:absolute;
-}
 
-  #wildIcon{
-  right:48%;
-  top:24%;
+  position:absolute;
 }
 
 #playerIcon{
   left:18%;
   bottom:35%;
+
+  z-index:10;
 }
+
+/* =========================
+   戦闘メニュー
+========================= */
 
 .battleMenu{
   position:absolute;
+
   left:0;
   right:0;
   bottom:0;
+
   height:165px;
+
   background:#222;
+
   border-top:4px solid #111;
+
   padding:8px;
+
   z-index:20;
 }
 
 .battleButtons{
   display:grid;
+
   grid-template-columns:repeat(2,1fr);
+
   gap:6px;
 }
 
 .battleButtons button{
   padding:10px;
+
   border:2px solid #111;
   border-radius:7px;
+
   font-weight:bold;
 }
 
 .battleText{
   position:absolute;
+
   left:8px;
   right:8px;
   bottom:168px;
+
   background:rgba(0,0,0,.85);
+
   border:2px solid #fff;
   border-radius:8px;
+
   padding:9px;
+
   z-index:25;
+
   min-height:42px;
 }
 
@@ -582,13 +705,16 @@ button{
 .shopItems{
   display:grid;
   grid-template-columns:repeat(2,1fr);
+
   gap:8px;
 }
 
 .shopItem{
   border:3px solid #333;
   border-radius:10px;
+
   padding:10px;
+
   background:#fff;
 }
 
@@ -607,16 +733,21 @@ button{
 
 .modalBox{
   width:min(600px,94vw);
+
   background:#fff;
   color:#222;
+
   border:4px solid #222;
   border-radius:12px;
+
   padding:15px;
 }
 
 .modalButtons{
   display:grid;
+
   gap:5px;
+
   margin-top:10px;
 }
 
@@ -625,6 +756,7 @@ button{
 ========================= */
 
 @media(max-width:500px){
+
   .title{
     font-size:48px;
   }
@@ -641,315 +773,302 @@ button{
     font-size:65px;
   }
 
-  .tile{
-    width:9vw;
-    height:9vw;
-    font-size:7vw;
+  #wildIcon{
+    font-size:65px;
   }
+
+  #playerIcon{
+    font-size:65px;
+  }
+
+  .tile{
+    font-size:6vw;
+  }
+
 }
-</style>
-</head>
 
-<body>
-
-<div id="game">
-
-<!-- =========================
+</style></head><body><div id="game"><!-- =========================
      タイトル
-========================= -->
-
-<div id="titleScreen" class="screen active">
-
-  <div class="title">パチモン</div>
-
-  <div class="subtitle">
+========================= --><div id="titleScreen" class="screen active">  <div class="title">パチモン</div>  <div class="subtitle">
     パチッとモンスター
-  </div>
+  </div>  <div class="startBox"><h2>最初のパチモンを選ぼう！</h2>
 
-  <div class="startBox">
+<div class="starterButtons">
 
-    <h2>最初のパチモンを選ぼう！</h2>
+  <button class="starterBtn" onclick="chooseStarter(1)">
+    <span class="icon">🐣</span>
+    ピヨカラ
+  </button>
 
-    <div class="starterButtons">
+  <button class="starterBtn" onclick="chooseStarter(4)">
+    <span class="icon">🐶</span>
+    イヌヌワン
+  </button>
 
-      <button class="starterBtn" onclick="chooseStarter(1)">
-        <span class="icon">🐣</span>
-        ピヨカラ
-      </button>
-
-      <button class="starterBtn" onclick="chooseStarter(4)">
-        <span class="icon">🐶</span>
-        イヌヌワン
-      </button>
-
-      <button class="starterBtn" onclick="chooseStarter(7)">
-        <span class="icon">🐱</span>
-        ネココネコ
-      </button>
-
-    </div>
-
-  </div>
+  <button class="starterBtn" onclick="chooseStarter(7)">
+    <span class="icon">🐱</span>
+    ネココネコ
+  </button>
 
 </div>
 
-<!-- =========================
+  </div></div><!-- =========================
      マップ
-========================= -->
+========================= --><div id="mapScreen" class="screen">  <div id="hud"><div class="hudLeft">
 
-<div id="mapScreen" class="screen">
+  <span id="mapName">
+    パチタウン
+  </span>
 
-  <div id="hud">
-    <div class="hudLeft">
-      <span id="mapName">パチタウン</span>
-      <span>👣<span id="steps">0</span></span>
-    </div>
+  <span>
+    👣<span id="steps">0</span>
+  </span>
 
-    <div>
-      💰 <span id="money" class="hudMoney">1000</span>円
-    </div>
-  </div>
+</div>
 
-  <div id="mapArea">
-    <div id="mapGrid" class="mapGrid"></div>
-  </div>
+<div>
+  💰
+  <span id="money" class="hudMoney">
+    1000
+  </span>
+  円
+</div>
 
-  <div id="message">
+  </div>  <div id="mapArea"><div id="mapGrid" class="mapGrid"></div>
+
+  </div>  <div id="message">
     パチモンの世界へようこそ！
-  </div>
+  </div>  <div id="controls"><div class="dpad">
 
-  <div id="controls">
+  <button id="up" onclick="move(0,-1)">
+    ▲
+  </button>
 
-    <div class="dpad">
+  <button id="left" onclick="move(-1,0)">
+    ◀
+  </button>
 
-      <button id="up" onclick="move(0,-1)">▲</button>
-      <button id="left" onclick="move(-1,0)">◀</button>
-      <button id="right" onclick="move(1,0)">▶</button>
-      <button id="down" onclick="move(0,1)">▼</button>
+  <button id="right" onclick="move(1,0)">
+    ▶
+  </button>
 
-    </div>
-
-    <div class="menuButtons">
-
-      <button onclick="openDex()">📖 図鑑</button>
-      <button onclick="openParty()">👥 手持ち</button>
-      <button onclick="openBox()">📦 BOX</button>
-      <button onclick="openMainMenu()">☰ メニュー</button>
-
-    </div>
-
-  </div>
+  <button id="down" onclick="move(0,1)">
+    ▼
+  </button>
 
 </div>
 
-<!-- =========================
+<div class="menuButtons">
+
+  <button onclick="openDex()">
+    📖 図鑑
+  </button>
+
+  <button onclick="openParty()">
+    👥 手持ち
+  </button>
+
+  <button onclick="openBox()">
+    📦 BOX
+  </button>
+
+  <button onclick="openMainMenu()">
+    ☰ メニュー
+  </button>
+
+</div>
+
+  </div></div><!-- =========================
      メインメニュー
-========================= -->
+========================= --><div id="mainMenu" class="overlay">  <div class="panel"><h2>メニュー</h2>
 
-<div id="mainMenu" class="overlay">
+<button onclick="openDex()">
+  📖 パチモン図鑑
+</button>
 
-  <div class="panel">
+<button onclick="openParty()">
+  👥 手持ち
+</button>
 
-    <h2>メニュー</h2>
+<button onclick="openBox()">
+  📦 パチモンBOX
+</button>
 
-    <button onclick="openDex()">📖 パチモン図鑑</button>
-    <button onclick="openParty()">👥 手持ち</button>
-    <button onclick="openBox()">📦 パチモンBOX</button>
+<button onclick="saveGame()">
+  💾 セーブ
+</button>
 
-    <button onclick="saveGame()">💾 セーブ</button>
+<button onclick="resetGame()">
+  🔄 リセット
+</button>
 
-    <button onclick="resetGame()">
-      🔄 リセット
-    </button>
+<button
+  class="closeBtn"
+  onclick="closeOverlays()"
+>
+  閉じる
+</button>
 
-    <button class="closeBtn" onclick="closeOverlays()">
-      閉じる
-    </button>
-
-  </div>
-
-</div>
-
-<!-- =========================
+  </div></div><!-- =========================
      図鑑
-========================= -->
+========================= --><div id="dexPanel" class="overlay">  <div class="panel"><h2>📖 パチモン図鑑</h2>
 
-<div id="dexPanel" class="overlay">
+<div id="dexGrid" class="dexGrid"></div>
 
-  <div class="panel">
+<button
+  class="closeBtn"
+  onclick="closeOverlays()"
+>
+  閉じる
+</button>
 
-    <h2>📖 パチモン図鑑</h2>
-
-    <div id="dexGrid" class="dexGrid"></div>
-
-    <button class="closeBtn" onclick="closeOverlays()">
-      閉じる
-    </button>
-
-  </div>
-
-</div>
-
-<!-- =========================
+  </div></div><!-- =========================
      手持ち
-========================= -->
+========================= --><div id="partyPanel" class="overlay">  <div class="panel"><h2>👥 手持ちパチモン</h2>
 
-<div id="partyPanel" class="overlay">
+<div id="partyList" class="monsterList"></div>
 
-  <div class="panel">
+<button
+  class="closeBtn"
+  onclick="closeOverlays()"
+>
+  閉じる
+</button>
 
-    <h2>👥 手持ちパチモン</h2>
-
-    <div id="partyList" class="monsterList"></div>
-
-    <button class="closeBtn" onclick="closeOverlays()">
-      閉じる
-    </button>
-
-  </div>
-
-</div>
-
-<!-- =========================
+  </div></div><!-- =========================
      BOX
-========================= -->
+========================= --><div id="boxPanel" class="overlay">  <div class="panel"><h2>📦 パチモンBOX</h2>
 
-<div id="boxPanel" class="overlay">
+<div id="boxTabs" class="boxTabs"></div>
 
-  <div class="panel">
+<div id="boxGrid" class="boxGrid"></div>
 
-    <h2>📦 パチモンBOX</h2>
+<button
+  class="closeBtn"
+  onclick="closeOverlays()"
+>
+  閉じる
+</button>
 
-    <div id="boxTabs" class="boxTabs"></div>
-
-    <div id="boxGrid" class="boxGrid"></div>
-
-    <button class="closeBtn" onclick="closeOverlays()">
-      閉じる
-    </button>
-
-  </div>
-
-</div>
-
-<!-- =========================
+  </div></div><!-- =========================
      戦闘
-========================= -->
+========================= --><div id="battleScreen" class="screen">  <div class="battleTop"><b id="wildName">
+  野生のパチモン
+</b>
 
-<div id="battleScreen" class="screen">
+<div>
+  Lv.<span id="wildLevel">5</span>
+</div>
 
-  <div class="battleTop">
+<div class="hpbar">
 
-    <b id="wildName">野生のパチモン</b>
+  <div
+    id="wildHpFill"
+    class="hpfill"
+  ></div>
 
-    <div>
-      Lv.<span id="wildLevel">5</span>
-    </div>
+</div>
 
-    <div class="hpbar">
-      <div id="wildHpFill" class="hpfill"></div>
-    </div>
+<div class="small">
 
-    <div class="small">
-      HP <span id="wildHp">20</span>/<span id="wildMaxHp">20</span>
-    </div>
+  HP
+  <span id="wildHp">20</span>
+  /
+  <span id="wildMaxHp">20</span>
 
-  </div>
+</div>
 
-  <div id="wildIcon" class="battleMonster">
+  </div>  <div
+    id="wildIcon"
+    class="battleMonster"
+  >
     🐣
-  </div>
-
-  <div id="playerIcon" class="battleMonster">
+  </div>  <div
+    id="playerIcon"
+    class="battleMonster"
+  >
     🐣
-  </div>
+  </div>  <div class="battleBottom"><b id="playerNameBattle">
+  ピヨカラ
+</b>
 
-  <div class="battleBottom">
+<div>
+  Lv.<span id="playerLevelBattle">5</span>
+</div>
 
-    <b id="playerNameBattle">ピヨカラ</b>
+<div class="hpbar">
 
-    <div>
-      Lv.<span id="playerLevelBattle">5</span>
-    </div>
+  <div
+    id="playerHpFill"
+    class="hpfill"
+  ></div>
 
-    <div class="hpbar">
-      <div id="playerHpFill" class="hpfill"></div>
-    </div>
+</div>
 
-    <div class="small">
-      HP <span id="playerHpBattle">20</span>/<span id="playerMaxHpBattle">20</span>
-    </div>
+<div class="small">
 
-  </div>
+  HP
+  <span id="playerHpBattle">20</span>
+  /
+  <span id="playerMaxHpBattle">20</span>
 
-  <div id="battleText" class="battleText">
+</div>
+
+  </div>  <div
+    id="battleText"
+    class="battleText"
+  >
     野生のパチモンが現れた！
-  </div>
+  </div>  <div class="battleMenu"><div
+  id="battleButtons"
+  class="battleButtons"
+>
 
-  <div class="battleMenu">
+  <button onclick="battleFight()">
+    ⚔️ たたかう
+  </button>
 
-    <div id="battleButtons" class="battleButtons">
+  <button onclick="battleItems()">
+    🎒 どうぐ
+  </button>
 
-      <button onclick="battleFight()">
-        ⚔️ たたかう
-      </button>
-
-      <button onclick="battleItems()">
-        🎒 どうぐ
-      </button>
-
-      <button onclick="battleRun()">
-        🏃 逃げる
-      </button>
-
-    </div>
-
-  </div>
+  <button onclick="battleRun()">
+    🏃 逃げる
+  </button>
 
 </div>
 
-<!-- =========================
+  </div></div><!-- =========================
      ショップ
-========================= -->
+========================= --><div id="shopPanel" class="overlay">  <div class="panel"><h2>🏥 パチモンセンター</h2>
 
-<div id="shopPanel" class="overlay">
+<p>
+  パチモンセンターへようこそ！<br>
+  パチモンの回復と道具の売買ができます。
+</p>
 
-  <div class="panel">
+<div
+  id="shopItems"
+  class="shopItems"
+></div>
 
-    <h2>🏥 パチモンセンター</h2>
+<button onclick="sellItems()">
+  💰 道具を売る
+</button>
 
-    <p>
-      パチモンセンターへようこそ！<br>
-      パチモンの回復と道具の売買ができます。
-    </p>
+<button
+  class="closeBtn"
+  onclick="closeOverlays()"
+>
+  閉じる
+</button>
 
-    <div id="shopItems" class="shopItems"></div>
-
-    <button onclick="sellItems()">
-      💰 道具を売る
-    </button>
-
-    <button class="closeBtn" onclick="closeOverlays()">
-      閉じる
-    </button>
-
-  </div>
-
-</div>
-
-<!-- =========================
+  </div></div><!-- =========================
      汎用モーダル
-========================= -->
-
-<div id="modal" class="overlay">
-
-  <div id="modalContent" class="modalBox"></div>
-
-</div>
-
-</div>
-
-<script>
+========================= --><div id="modal" class="overlay">  <div
+    id="modalContent"
+    class="modalBox"
+  ></div></div></div><script>
 
 /* =========================================================
    パチモンデータ
@@ -1031,6 +1150,7 @@ const MONSTERS = [
 ========================================================= */
 
 const MOVES = [
+
  {name:"たいあたり",power:8},
  {name:"ひっかく",power:10},
  {name:"ピヨピヨ",power:12},
@@ -1041,6 +1161,7 @@ const MOVES = [
  {name:"決裁",power:18},
  {name:"残業させる",power:19},
  {name:"ほしをなげる",power:24}
+
 ];
 
 /* =========================================================
@@ -1095,17 +1216,6 @@ const ITEMS = {
    8マップ
 ========================================================= */
 
-/*
-  # = 壁
-  . = 草
-  = = 道
-  T = 木
-  W = 水
-  C = パチモンセンター
-  S = ショップ
-  E = 出口
-*/
-
 const MAPS = [
 
 {
@@ -1113,20 +1223,23 @@ const MAPS = [
  name:"パチタウン",
  width:11,
  height:9,
+
  tiles:[
   "###########",
   "#.........#",
   "#..CCC....#",
   "#..CCC....#",
   "#.........#",
-  "#....===E##",
+  "#....===E.#",
   "#....===..#",
   "#.........#",
   "###########"
  ],
+
  exits:{
    "8,5":{map:1,x:1,y:5}
  }
+
 },
 
 {
@@ -1134,6 +1247,7 @@ const MAPS = [
  name:"パチタウン周辺",
  width:13,
  height:11,
+
  tiles:[
   "#############",
   "#...T.......#",
@@ -1147,10 +1261,12 @@ const MAPS = [
   "#...........#",
   "#############"
  ],
+
  exits:{
    "1,5":{map:0,x:7,y:5},
    "12,5":{map:2,x:1,y:5}
  }
+
 },
 
 {
@@ -1158,6 +1274,7 @@ const MAPS = [
  name:"モンモンシティ",
  width:11,
  height:9,
+
  tiles:[
   "###########",
   "#.........#",
@@ -1169,10 +1286,12 @@ const MAPS = [
   "#.........#",
   "###########"
  ],
+
  exits:{
    "1,5":{map:1,x:11,y:5},
    "5,5":{map:3,x:1,y:5}
  }
+
 },
 
 {
@@ -1180,6 +1299,7 @@ const MAPS = [
  name:"モンモンシティ周辺",
  width:13,
  height:11,
+
  tiles:[
   "#############",
   "#.....T.....#",
@@ -1193,10 +1313,12 @@ const MAPS = [
   "#...........#",
   "#############"
  ],
+
  exits:{
    "1,5":{map:2,x:4,y:5},
    "12,5":{map:4,x:1,y:6}
  }
+
 },
 
 {
@@ -1204,6 +1326,7 @@ const MAPS = [
  name:"パチパチシティ",
  width:11,
  height:10,
+
  tiles:[
   "###########",
   "#.........#",
@@ -1216,10 +1339,12 @@ const MAPS = [
   "#.........#",
   "###########"
  ],
+
  exits:{
    "1,5":{map:3,x:11,y:5},
    "5,5":{map:5,x:1,y:5}
  }
+
 },
 
 {
@@ -1227,6 +1352,7 @@ const MAPS = [
  name:"パチパチシティ周辺",
  width:14,
  height:11,
+
  tiles:[
   "##############",
   "#...TT.......#",
@@ -1240,10 +1366,12 @@ const MAPS = [
   "#............#",
   "##############"
  ],
+
  exits:{
    "1,5":{map:4,x:4,y:5},
    "13,5":{map:6,x:1,y:6}
  }
+
 },
 
 {
@@ -1251,6 +1379,7 @@ const MAPS = [
  name:"モンスタウン",
  width:11,
  height:10,
+
  tiles:[
   "###########",
   "#.........#",
@@ -1263,9 +1392,11 @@ const MAPS = [
   "#.........#",
   "###########"
  ],
+
  exits:{
    "1,5":{map:5,x:12,y:5}
  }
+
 },
 
 {
@@ -1273,30 +1404,72 @@ const MAPS = [
  name:"秘密の森",
  width:15,
  height:12,
+
+ /*
+   すべて15文字に統一
+ */
  tiles:[
   "###############",
   "#TTT.....TTTTT#",
   "#T.........T..#",
   "#T..WW.....T..#",
-  "#...WW.......#",
+  "#...WW......T.#",
   "#E====.......#",
   "#....TTTT....#",
   "#....T..T....#",
   "#....T..T....#",
-  "#............#",
-  "#............#",
+  "#.............#",
+  "#.............#",
   "###############"
  ],
+
  exits:{}
+
 }
 
 ];
 
 /* =========================================================
+   マップデータ検証
+========================================================= */
+
+function validateMaps(){
+
+ MAPS.forEach(map=>{
+
+   if(map.tiles.length!==map.height){
+
+     console.warn(
+       `MAP ${map.id}: height不一致`
+     );
+
+   }
+
+   map.tiles.forEach((row,index)=>{
+
+     if(row.length!==map.width){
+
+       console.warn(
+         `MAP ${map.id}: ${index}行目の幅が不一致`,
+         row.length,
+         map.width
+       );
+
+     }
+
+   });
+
+ });
+
+}
+
+validateMaps();
+
+/* =========================================================
    状態
 ========================================================= */
 
-let state = {
+let state={
 
  started:false,
 
@@ -1333,29 +1506,46 @@ let state = {
 
 };
 
-let currentBox = 0;
+let currentBox=0;
 
 /* =========================================================
    基本関数
 ========================================================= */
 
 function monsterData(id){
- return MONSTERS.find(m=>m.id===id);
+
+ return MONSTERS.find(
+   m=>m.id===id
+ );
+
 }
 
 function clamp(v,min,max){
- return Math.max(min,Math.min(max,v));
+
+ return Math.max(
+   min,
+   Math.min(max,v)
+ );
+
 }
 
 function createMonster(id,level=5){
 
  const d=monsterData(id);
 
+ if(!d){
+
+   console.error("存在しないパチモンID:",id);
+
+   return null;
+
+ }
+
  const maxHp=
    d.baseHp+
    Math.floor((level-1)*2.5);
 
- return {
+ return{
 
    id:id,
 
@@ -1367,21 +1557,30 @@ function createMonster(id,level=5){
 
    hp:maxHp,
 
-   atk:d.atk+
-      Math.floor((level-1)*1.3)
+   atk:
+     d.atk+
+     Math.floor((level-1)*1.3)
 
  };
 
 }
 
 function getMonsterName(mon){
+
+ if(!mon) return "？？？？";
+
  return monsterData(mon.id)?.name || "？？？";
+
 }
 
 function addDex(id){
 
- if(!state.dex.includes(id)){
+ if(
+   !state.dex.includes(id)
+ ){
+
    state.dex.push(id);
+
  }
 
 }
@@ -1394,9 +1593,12 @@ function chooseStarter(id){
 
  state.started=true;
 
- const starter=createMonster(id,5);
+ const starter=
+   createMonster(id,5);
 
- state.party=[starter];
+ state.party=[
+   starter
+ ];
 
  addDex(id);
 
@@ -1422,11 +1624,20 @@ function chooseStarter(id){
 
 function showScreen(id){
 
- document.querySelectorAll(".screen")
-   .forEach(el=>el.classList.remove("active"));
+ document
+   .querySelectorAll(".screen")
+   .forEach(el=>{
+     el.classList.remove("active");
+   });
 
- document.getElementById(id)
-   .classList.add("active");
+ const screen=
+   document.getElementById(id);
+
+ if(screen){
+
+   screen.classList.add("active");
+
+ }
 
 }
 
@@ -1438,72 +1649,115 @@ function renderMap(){
 
  const map=MAPS[state.map];
 
- const grid=document.getElementById("mapGrid");
+ if(!map){
+
+   console.error(
+     "存在しないマップ:",
+     state.map
+   );
+
+   state.map=0;
+   state.x=5;
+   state.y=6;
+
+   return renderMap();
+
+ }
+
+ const grid=
+   document.getElementById("mapGrid");
 
  grid.innerHTML="";
 
  grid.style.gridTemplateColumns=
    `repeat(${map.width},1fr)`;
 
+ grid.style.gridTemplateRows=
+   `repeat(${map.height},1fr)`;
+
  document.getElementById("mapName")
    .textContent=map.name;
 
  for(let y=0;y<map.height;y++){
 
+   const row=
+     map.tiles[y] || "";
+
    for(let x=0;x<map.width;x++){
 
-     let ch=map.tiles[y][x];
+     let ch=
+       row[x] || ".";
 
-     const tile=document.createElement("div");
+     const tile=
+       document.createElement("div");
 
      tile.className="tile";
 
      if(ch==="#"){
+
        tile.classList.add("wall");
        tile.textContent="🧱";
+
      }
 
      else if(ch==="."){
+
        tile.classList.add("grass");
        tile.textContent="🌱";
+
      }
 
      else if(ch==="="){
+
        tile.classList.add("road");
        tile.textContent="";
+
      }
 
      else if(ch==="T"){
+
        tile.classList.add("tree");
        tile.textContent="🌳";
+
      }
 
      else if(ch==="W"){
+
        tile.classList.add("water");
        tile.textContent="🌊";
+
      }
 
      else if(ch==="C"){
+
        tile.classList.add("center");
        tile.textContent="🏥";
+
      }
 
      else if(ch==="S"){
+
        tile.classList.add("shop");
        tile.textContent="🛒";
+
      }
 
      else if(ch==="E"){
+
        tile.classList.add("exit");
        tile.textContent="➡️";
+
      }
 
-     if(x===state.x && y===state.y){
+     if(
+       x===state.x &&
+       y===state.y
+     ){
 
        tile.classList.add("player");
 
        tile.innerHTML=
-         `<span class="playerIcon">🧑</span>`;
+         `<span class="mapPlayerIcon">🧑</span>`;
 
      }
 
@@ -1525,10 +1779,14 @@ function move(dx,dy){
 
  if(!state.started) return;
 
- const map=MAPS[state.map];
+ const map=
+   MAPS[state.map];
 
- const nx=state.x+dx;
- const ny=state.y+dy;
+ const nx=
+   state.x+dx;
+
+ const ny=
+   state.y+dy;
 
  if(
    nx<0 ||
@@ -1536,24 +1794,42 @@ function move(dx,dy){
    nx>=map.width ||
    ny>=map.height
  ){
+
    return;
+
  }
 
- const tile=map.tiles[ny][nx];
+ const tile=
+   map.tiles[ny][nx];
 
  if(tile==="#"){
-   setMessage("壁があって進めません。");
+
+   setMessage(
+     "壁があって進めません。"
+   );
+
    return;
+
  }
 
  if(tile==="T"){
-   setMessage("木があって進めません。");
+
+   setMessage(
+     "木があって進めません。"
+   );
+
    return;
+
  }
 
  if(tile==="W"){
-   setMessage("水があって進めません。");
+
+   setMessage(
+     "水があって進めません。"
+   );
+
    return;
+
  }
 
  state.x=nx;
@@ -1573,16 +1849,20 @@ function move(dx,dy){
 
 function checkTile(){
 
- const map=MAPS[state.map];
+ const map=
+   MAPS[state.map];
 
- const tile=map.tiles[state.y][state.x];
+ const tile=
+   map.tiles[state.y][state.x];
 
  /* 出口 */
 
  if(tile==="E"){
 
    const exit=
-     map.exits[`${state.x},${state.y}`];
+     map.exits[
+       `${state.x},${state.y}`
+     ];
 
    if(exit){
 
@@ -1609,7 +1889,9 @@ function checkTile(){
    );
 
    setTimeout(()=>{
+
      openShop();
+
    },150);
 
    return;
@@ -1618,12 +1900,19 @@ function checkTile(){
 
  /* 草・道でエンカウント */
 
- if(tile==="." || tile==="="){
+ if(
+   tile==="." ||
+   tile==="="
+ ){
 
    const chance=
-     tile==="." ? 0.25 : 0.12;
+     tile==="."
+       ? 0.25
+       : 0.12;
 
-   if(Math.random()<chance){
+   if(
+     Math.random()<chance
+   ){
 
      startWildBattle();
 
@@ -1637,7 +1926,11 @@ function checkTile(){
    マップ変更
 ========================================================= */
 
-function changeMap(mapId,x,y){
+function changeMap(
+  mapId,
+  x,
+  y
+){
 
  state.map=mapId;
  state.x=x;
@@ -1658,7 +1951,9 @@ function changeMap(mapId,x,y){
 function healParty(){
 
  state.party.forEach(mon=>{
+
    mon.hp=mon.maxHp;
+
  });
 
 }
@@ -1738,7 +2033,8 @@ function openDex(){
 
  });
 
- document.getElementById("dexPanel")
+ document
+   .getElementById("dexPanel")
    .classList.add("active");
 
 }
@@ -1756,59 +2052,76 @@ function openParty(){
 
  list.innerHTML="";
 
- state.party.forEach((mon,index)=>{
+ state.party.forEach(
+   (mon,index)=>{
 
-   const d=monsterData(mon.id);
+     const d=
+       monsterData(mon.id);
 
-   const div=
-     document.createElement("div");
+     const div=
+       document.createElement("div");
 
-   div.className=
-     "monsterCard"+
-     (mon.hp<=0 ? " dead":"");
+     div.className=
+       "monsterCard"+
+       (
+         mon.hp<=0
+           ? " dead"
+           : ""
+       );
 
-   const hpPercent=
-     clamp(
-       mon.hp/mon.maxHp*100,
-       0,
-       100
-     );
+     const hpPercent=
+       clamp(
+         mon.hp/
+         mon.maxHp*
+         100,
+         0,
+         100
+       );
 
-   div.innerHTML=`
+     div.innerHTML=`
 
-     <div class="monsterIcon">
-       ${d.icon}
-     </div>
+       <div class="monsterIcon">
+         ${d.icon}
+       </div>
 
-     <b>${d.name}</b>
+       <b>${d.name}</b>
 
-     <div>
-       Lv.${mon.level}
-     </div>
+       <div>
+         Lv.${mon.level}
+       </div>
 
-     <div class="hpbar">
-       <div
-         class="hpfill"
-         style="width:${hpPercent}%"
-       ></div>
-     </div>
+       <div class="hpbar">
 
-     <div class="small">
-       HP ${mon.hp}/${mon.maxHp}
-       ／ EXP ${mon.exp}/100
-     </div>
+         <div
+           class="hpfill"
+           style="width:${hpPercent}%"
+         ></div>
 
-     <button onclick="showPartyDetail(${index})">
-       詳細
-     </button>
+       </div>
 
-   `;
+       <div class="small">
 
-   list.appendChild(div);
+         HP ${mon.hp}/${mon.maxHp}
+         ／
+         EXP ${mon.exp}/100
 
- });
+       </div>
 
- document.getElementById("partyPanel")
+       <button
+         onclick="showPartyDetail(${index})"
+       >
+         詳細
+       </button>
+
+     `;
+
+     list.appendChild(div);
+
+   }
+ );
+
+ document
+   .getElementById("partyPanel")
    .classList.add("active");
 
 }
@@ -1819,9 +2132,11 @@ function openParty(){
 
 function showPartyDetail(index){
 
- const mon=state.party[index];
+ const mon=
+   state.party[index];
 
- const d=monsterData(mon.id);
+ const d=
+   monsterData(mon.id);
 
  let html=`
 
@@ -1846,17 +2161,23 @@ function showPartyDetail(index){
  if(d.evo){
 
    html+=`
+
      <p>
        Lv.${d.evoLv}で
        ${monsterData(d.evo).name}
        に進化
      </p>
+
    `;
 
  }else{
 
    html+=`
-     <p>これ以上進化しません。</p>
+
+     <p>
+       これ以上進化しません。
+     </p>
+
    `;
 
  }
@@ -1865,11 +2186,15 @@ function showPartyDetail(index){
 
    <div class="modalButtons">
 
-     <button onclick="openBoxForParty(${index})">
+     <button
+       onclick="openBoxForParty(${index})"
+     >
        📦 BOXへ預ける
      </button>
 
-     <button onclick="closeModal()">
+     <button
+       onclick="closeModal()"
+     >
        閉じる
      </button>
 
@@ -1891,7 +2216,8 @@ function openBox(){
 
  renderBox();
 
- document.getElementById("boxPanel")
+ document
+   .getElementById("boxPanel")
    .classList.add("active");
 
 }
@@ -1908,15 +2234,22 @@ function renderBox(){
    const btn=
      document.createElement("button");
 
-   btn.textContent=`BOX ${i+1}`;
+   btn.textContent=
+     `BOX ${i+1}`;
 
    btn.onclick=()=>{
+
      currentBox=i;
+
      renderBox();
+
    };
 
    if(i===currentBox){
-     btn.style.background="#ffdf65";
+
+     btn.style.background=
+       "#ffdf65";
+
    }
 
    tabs.appendChild(btn);
@@ -1929,45 +2262,62 @@ function renderBox(){
  grid.innerHTML="";
 
  state.boxes[currentBox]
-   .forEach((mon,index)=>{
+   .forEach(
+     (mon,index)=>{
 
-     const slot=
-       document.createElement("div");
+       const slot=
+         document.createElement("div");
 
-     slot.className=
-       "boxSlot"+
-       (mon ? " occupied":"");
+       slot.className=
+         "boxSlot"+
+         (
+           mon
+             ? " occupied"
+             : ""
+         );
 
-     if(mon){
+       if(mon){
 
-       const d=monsterData(mon.id);
+         const d=
+           monsterData(mon.id);
 
-       slot.innerHTML=`
-         <div class="slotIcon">${d.icon}</div>
-         <b>${d.name}</b>
-         <span class="small">
-           Lv.${mon.level}
-         </span>
-       `;
+         slot.innerHTML=`
 
-       slot.onclick=()=>{
-         boxSlotAction(index);
-       };
+           <div class="slotIcon">
+             ${d.icon}
+           </div>
 
-     }else{
+           <b>${d.name}</b>
 
-       slot.innerHTML=`
-         <span class="small">
-           ${index+1}<br>
-           空き
-         </span>
-       `;
+           <span class="small">
+             Lv.${mon.level}
+           </span>
+
+         `;
+
+         slot.onclick=()=>{
+
+           boxSlotAction(index);
+
+         };
+
+       }else{
+
+         slot.innerHTML=`
+
+           <span class="small">
+             ${index+1}<br>
+             空き
+           </span>
+
+         `;
+
+       }
+
+       grid.appendChild(slot);
 
      }
-
-     grid.appendChild(slot);
-
-   });
+   );
 
 }
 
@@ -1984,8 +2334,10 @@ function boxSlotAction(slot){
 
  let html=`
 
-   <h2>${monsterData(mon.id).icon}
-       ${monsterData(mon.id).name}</h2>
+   <h2>
+     ${monsterData(mon.id).icon}
+     ${monsterData(mon.id).name}
+   </h2>
 
    <p>
      Lv.${mon.level}<br>
@@ -1996,31 +2348,44 @@ function boxSlotAction(slot){
 
  `;
 
- if(state.party.length<4){
+ if(
+   state.party.length<4
+ ){
 
    html+=`
-     <button onclick="boxToParty(${slot})">
+
+     <button
+       onclick="boxToParty(${slot})"
+     >
        手持ちに加える
      </button>
+
    `;
 
  }else{
 
    html+=`
-     <button onclick="swapBoxWithParty(${slot})">
+
+     <button
+       onclick="swapBoxWithParty(${slot})"
+     >
        手持ちと入れ替える
      </button>
+
    `;
 
  }
 
  html+=`
 
-     <button onclick="closeModal()">
+     <button
+       onclick="closeModal()"
+     >
        キャンセル
      </button>
 
    </div>
+
  `;
 
  openModal(html);
@@ -2034,9 +2399,13 @@ function boxToParty(slot){
 
  if(!mon) return;
 
- if(state.party.length>=4){
+ if(
+   state.party.length>=4
+ ){
 
-   alert("手持ちは4匹までです。");
+   alert(
+     "手持ちは4匹までです。"
+   );
 
    return;
 
@@ -2064,39 +2433,54 @@ function swapBoxWithParty(slot){
  if(!boxMon) return;
 
  let html=`
-   <h2>入れ替えるパチモンを選択</h2>
+
+   <h2>
+     入れ替えるパチモンを選択
+   </h2>
+
  `;
 
- state.party.forEach((mon,index)=>{
+ state.party.forEach(
+   (mon,index)=>{
 
-   const d=monsterData(mon.id);
+     const d=
+       monsterData(mon.id);
 
-   html+=`
-     <button
-       style="width:100%;text-align:left"
-       onclick="doBoxPartySwap(${slot},${index})"
-     >
-       ${d.icon} ${d.name}
-       Lv.${mon.level}
-     </button>
-   `;
+     html+=`
 
- });
+       <button
+         style="width:100%;text-align:left"
+         onclick="doBoxPartySwap(${slot},${index})"
+       >
+         ${d.icon}
+         ${d.name}
+         Lv.${mon.level}
+       </button>
+
+     `;
+
+   }
+ );
 
  html+=`
+
    <button
      onclick="closeModal()"
      style="width:100%"
    >
      キャンセル
    </button>
+
  `;
 
  openModal(html);
 
 }
 
-function doBoxPartySwap(slot,partyIndex){
+function doBoxPartySwap(
+  slot,
+  partyIndex
+){
 
  const temp=
    state.party[partyIndex];
@@ -2104,13 +2488,16 @@ function doBoxPartySwap(slot,partyIndex){
  state.party[partyIndex]=
    state.boxes[currentBox][slot];
 
- state.boxes[currentBox][slot]=temp;
+ state.boxes[currentBox][slot]=
+   temp;
 
  closeModal();
 
  renderBox();
 
- setMessage("手持ちとBOXを入れ替えました！");
+ setMessage(
+   "手持ちとBOXを入れ替えました！"
+ );
 
 }
 
@@ -2118,11 +2505,15 @@ function doBoxPartySwap(slot,partyIndex){
    手持ち→BOX
 ========================================================= */
 
-function openBoxForParty(partyIndex){
+function openBoxForParty(
+  partyIndex
+){
 
  closeModal();
 
- if(state.party.length<=1){
+ if(
+   state.party.length<=1
+ ){
 
    alert(
      "手持ちが1匹しかいないため、預けられません。"
@@ -2134,7 +2525,9 @@ function openBoxForParty(partyIndex){
 
  let html=`
 
-   <h2>預けるBOXを選択</h2>
+   <h2>
+     預けるBOXを選択
+   </h2>
 
    <p>
      空いているBOXスロットを選んでください。
@@ -2146,11 +2539,14 @@ function openBoxForParty(partyIndex){
 
    const empty=
      state.boxes[b]
-       .findIndex(x=>x===null);
+       .findIndex(
+         x=>x===null
+       );
 
    if(empty>=0){
 
      html+=`
+
        <button
          style="width:100%"
          onclick="
@@ -2162,8 +2558,10 @@ function openBoxForParty(partyIndex){
          "
        >
          BOX ${b+1}
-         ／ ${empty+1}番
+         ／
+         ${empty+1}番
        </button>
+
      `;
 
    }
@@ -2171,26 +2569,36 @@ function openBoxForParty(partyIndex){
  }
 
  html+=`
+
    <button
      onclick="closeModal()"
      style="width:100%"
    >
      キャンセル
    </button>
+
  `;
 
  openModal(html);
 
 }
 
-function partyToBox(partyIndex,boxIndex,slot){
+function partyToBox(
+  partyIndex,
+  boxIndex,
+  slot
+){
 
  const mon=
    state.party[partyIndex];
 
- state.boxes[boxIndex][slot]=mon;
+ state.boxes[boxIndex][slot]=
+   mon;
 
- state.party.splice(partyIndex,1);
+ state.party.splice(
+   partyIndex,
+   1
+ );
 
  closeModal();
 
@@ -2225,26 +2633,19 @@ function startWildBattle(){
 
  let id;
 
- /*
-   マップが進むほど強いパチモンが出る
- */
-
  const maxId=
-   state.map>=6 ? 50 :
-   state.map>=4 ? 42 :
-   state.map>=2 ? 36 :
-   30;
+   state.map>=6
+     ? 50
+     : state.map>=4
+       ? 42
+       : state.map>=2
+         ? 36
+         : 30;
 
- do{
-
-   id=
-     Math.floor(
-       Math.random()*maxId
-     )+1;
-
- }while(
-   id>50
- );
+ id=
+   Math.floor(
+     Math.random()*maxId
+   )+1;
 
  const level=
    Math.max(
@@ -2253,12 +2654,17 @@ function startWildBattle(){
        35,
        3+
        state.map*3+
-       Math.floor(Math.random()*6)
+       Math.floor(
+         Math.random()*6
+       )
      )
    );
 
  const enemy=
-   createMonster(id,level);
+   createMonster(
+     id,
+     level
+   );
 
  state.battle={
 
@@ -2272,7 +2678,9 @@ function startWildBattle(){
 
  addDex(id);
 
- showScreen("battleScreen");
+ showScreen(
+   "battleScreen"
+ );
 
  renderBattle();
 
@@ -2288,14 +2696,18 @@ function startWildBattle(){
 
 function renderBattle(){
 
- const battle=state.battle;
+ const battle=
+   state.battle;
 
  if(!battle) return;
 
- const enemy=battle.enemy;
+ const enemy=
+   battle.enemy;
 
  const player=
-   state.party[battle.playerIndex];
+   state.party[
+     battle.playerIndex
+   ];
 
  const enemyData=
    monsterData(enemy.id);
@@ -2304,42 +2716,74 @@ function renderBattle(){
    monsterData(player.id);
 
  document.getElementById("wildName")
-   .textContent=enemyData.name;
+   .textContent=
+     enemyData.name;
 
  document.getElementById("wildLevel")
-   .textContent=enemy.level;
+   .textContent=
+     enemy.level;
 
  document.getElementById("wildHp")
-   .textContent=Math.max(0,enemy.hp);
+   .textContent=
+     Math.max(
+       0,
+       enemy.hp
+     );
 
  document.getElementById("wildMaxHp")
-   .textContent=enemy.maxHp;
+   .textContent=
+     enemy.maxHp;
 
  document.getElementById("wildHpFill")
    .style.width=
-     `${clamp(enemy.hp/enemy.maxHp*100,0,100)}%`;
+     `${
+       clamp(
+         enemy.hp/
+         enemy.maxHp*
+         100,
+         0,
+         100
+       )
+     }%`;
 
  document.getElementById("wildIcon")
-   .textContent=enemyData.icon;
+   .textContent=
+     enemyData.icon;
 
  document.getElementById("playerNameBattle")
-   .textContent=playerData.name;
+   .textContent=
+     playerData.name;
 
  document.getElementById("playerLevelBattle")
-   .textContent=player.level;
+   .textContent=
+     player.level;
 
  document.getElementById("playerHpBattle")
-   .textContent=Math.max(0,player.hp);
+   .textContent=
+     Math.max(
+       0,
+       player.hp
+     );
 
  document.getElementById("playerMaxHpBattle")
-   .textContent=player.maxHp;
+   .textContent=
+     player.maxHp;
 
  document.getElementById("playerHpFill")
    .style.width=
-     `${clamp(player.hp/player.maxHp*100,0,100)}%`;
+     `${
+       clamp(
+         player.hp/
+         player.maxHp*
+         100,
+         0,
+         100
+       )
+     }%`;
 
  document.getElementById("playerIcon")
-   .textContent=playerData.icon;
+   .textContent=
+     playerData.icon;
 
 }
 
@@ -2350,30 +2794,42 @@ function renderBattle(){
 function battleFight(){
 
  let html=`
-   <h2>技を選択</h2>
+
+   <h2>
+     技を選択
+   </h2>
+
  `;
 
- MOVES.forEach((move,index)=>{
+ MOVES.forEach(
+   (move,index)=>{
 
-   html+=`
-     <button
-       style="width:100%;text-align:left"
-       onclick="useMove(${index})"
-     >
-       ⚔️ ${move.name}
-       ／ 威力 ${move.power}
-     </button>
-   `;
+     html+=`
 
- });
+       <button
+         style="width:100%;text-align:left"
+         onclick="useMove(${index})"
+       >
+         ⚔️
+         ${move.name}
+         ／
+         威力 ${move.power}
+       </button>
+
+     `;
+
+   }
+ );
 
  html+=`
+
    <button
      onclick="closeModal()"
      style="width:100%"
    >
      戻る
    </button>
+
  `;
 
  openModal(html);
@@ -2384,16 +2840,21 @@ function battleFight(){
    技使用
 ========================================================= */
 
-function useMove(moveIndex){
+function useMove(
+  moveIndex
+){
 
  closeModal();
 
- const battle=state.battle;
+ const battle=
+   state.battle;
 
  if(!battle) return;
 
  const player=
-   state.party[battle.playerIndex];
+   state.party[
+     battle.playerIndex
+   ];
 
  const enemy=
    battle.enemy;
@@ -2404,7 +2865,9 @@ function useMove(moveIndex){
  let damage=
    move.power+
    player.atk+
-   Math.floor(Math.random()*6);
+   Math.floor(
+     Math.random()*6
+   );
 
  enemy.hp=
    Math.max(
@@ -2420,17 +2883,23 @@ function useMove(moveIndex){
 
  if(enemy.hp<=0){
 
-   setTimeout(()=>{
-     winBattle();
-   },700);
+   setTimeout(
+     ()=>{
+       winBattle();
+     },
+     700
+   );
 
    return;
 
  }
 
- setTimeout(()=>{
-   enemyAttack();
- },700);
+ setTimeout(
+   ()=>{
+     enemyAttack();
+   },
+   700
+ );
 
 }
 
@@ -2440,19 +2909,24 @@ function useMove(moveIndex){
 
 function enemyAttack(){
 
- const battle=state.battle;
+ const battle=
+   state.battle;
 
  if(!battle) return;
 
  const player=
-   state.party[battle.playerIndex];
+   state.party[
+     battle.playerIndex
+   ];
 
  const enemy=
    battle.enemy;
 
  const damage=
    enemy.atk+
-   Math.floor(Math.random()*5);
+   Math.floor(
+     Math.random()*5
+   );
 
  player.hp=
    Math.max(
@@ -2468,9 +2942,12 @@ function enemyAttack(){
 
  if(player.hp<=0){
 
-   setTimeout(()=>{
-     playerDefeated();
-   },700);
+   setTimeout(
+     ()=>{
+       playerDefeated();
+     },
+     700
+   );
 
  }
 
@@ -2482,17 +2959,23 @@ function enemyAttack(){
 
 function winBattle(){
 
- const battle=state.battle;
+ const battle=
+   state.battle;
 
- const enemy=battle.enemy;
+ const enemy=
+   battle.enemy;
 
  const player=
-   state.party[battle.playerIndex];
+   state.party[
+     battle.playerIndex
+   ];
 
  const money=
    50+
    enemy.level*15+
-   Math.floor(Math.random()*50);
+   Math.floor(
+     Math.random()*50
+   );
 
  const exp=
    35+
@@ -2513,7 +2996,9 @@ function winBattle(){
  if(reward){
 
    state.items[reward]=
-     (state.items[reward]||0)+1;
+     (
+       state.items[reward]||0
+     )+1;
 
    text+=
      `<br>🎁 ${ITEMS[reward].name}を手に入れた！`;
@@ -2526,19 +3011,24 @@ function winBattle(){
 
  renderBattle();
 
- setTimeout(()=>{
+ setTimeout(
+   ()=>{
 
-   state.battle=null;
+     state.battle=null;
 
-   showScreen("mapScreen");
+     showScreen(
+       "mapScreen"
+     );
 
-   renderAll();
+     renderAll();
 
-   setMessage(
-     `${getMonsterName(player)}は戦闘に勝利した！`
-   );
+     setMessage(
+       `${getMonsterName(player)}は戦闘に勝利した！`
+     );
 
- },1400);
+   },
+   1400
+ );
 
 }
 
@@ -2546,28 +3036,41 @@ function winBattle(){
    ドロップアイテム
 ========================================================= */
 
-function getBattleDrop(enemy){
+function getBattleDrop(
+  enemy
+){
 
- const r=Math.random();
+ const r=
+   Math.random();
 
  if(r<0.10){
+
    return "hyperCapsule";
+
  }
 
  if(r<0.25){
+
    return "superCapsule";
+
  }
 
  if(r<0.50){
+
    return "capsule";
+
  }
 
  if(r<0.75){
+
    return "potion";
+
  }
 
  if(r<0.85){
+
    return "superPotion";
+
  }
 
  return null;
@@ -2578,9 +3081,13 @@ function getBattleDrop(enemy){
    レベルアップ・進化
 ========================================================= */
 
-function checkLevelUp(mon){
+function checkLevelUp(
+  mon
+){
 
- while(mon.exp>=100){
+ while(
+   mon.exp>=100
+ ){
 
    mon.exp-=100;
 
@@ -2588,7 +3095,8 @@ function checkLevelUp(mon){
 
    mon.maxHp+=3;
 
-   mon.hp=mon.maxHp;
+   mon.hp=
+     mon.maxHp;
 
    mon.atk+=2;
 
@@ -2600,45 +3108,52 @@ function checkLevelUp(mon){
      mon.level>=d.evoLv
    ){
 
-     const oldName=d.name;
+     const oldName=
+       d.name;
 
-     const newId=d.evo;
+     const newId=
+       d.evo;
 
      const newData=
        monsterData(newId);
 
-     mon.id=newId;
-
-     /*
-       進化後の能力を少し強化
-    */
+     mon.id=
+       newId;
 
      mon.maxHp=
        Math.max(
          mon.maxHp,
          newData.baseHp+
-         Math.floor((mon.level-1)*2.5)
+         Math.floor(
+           (mon.level-1)*2.5
+         )
        );
 
      mon.atk=
        Math.max(
          mon.atk,
          newData.atk+
-         Math.floor((mon.level-1)*1.3)
+         Math.floor(
+           (mon.level-1)*1.3
+         )
        );
 
-     mon.hp=mon.maxHp;
+     mon.hp=
+       mon.maxHp;
 
      addDex(newId);
 
-     setTimeout(()=>{
+     setTimeout(
+       ()=>{
 
-       showEvolutionMessage(
-         oldName,
-         newData.name
-       );
+         showEvolutionMessage(
+           oldName,
+           newData.name
+         );
 
-     },300);
+       },
+       300
+     );
 
    }
 
@@ -2650,18 +3165,30 @@ function checkLevelUp(mon){
    進化演出
 ========================================================= */
 
-function showEvolutionMessage(oldName,newName){
+function showEvolutionMessage(
+  oldName,
+  newName
+){
 
  openModal(`
 
-   <h2>✨ 進化！</h2>
+   <h2>
+     ✨ 進化！
+   </h2>
 
-   <p style="font-size:20px;text-align:center">
+   <p
+     style="
+       font-size:20px;
+       text-align:center
+     "
+   >
 
      ${oldName}
+
      <br>
      ↓
      <br>
+
      <b>${newName}</b>
 
    </p>
@@ -2684,41 +3211,53 @@ function showEvolutionMessage(oldName,newName){
 function playerDefeated(){
 
  setBattleText(
-   `${getMonsterName(state.party[state.battle.playerIndex])}は倒れた！`
+   `${getMonsterName(
+     state.party[
+       state.battle.playerIndex
+     ]
+   )}は倒れた！`
  );
 
- setTimeout(()=>{
+ setTimeout(
+   ()=>{
 
-   const next=
-     firstAlive();
+     const next=
+       firstAlive();
 
-   if(next>=0){
+     if(next>=0){
 
-     state.battle.playerIndex=next;
+       state.battle.playerIndex=
+         next;
 
-     setBattleText(
-       `${getMonsterName(state.party[next])}を出した！`
-     );
+       setBattleText(
+         `${getMonsterName(
+           state.party[next]
+         )}を出した！`
+       );
 
-     renderBattle();
+       renderBattle();
 
-   }else{
+     }else{
 
-     healParty();
+       healParty();
 
-     state.battle=null;
+       state.battle=null;
 
-     showScreen("mapScreen");
+       showScreen(
+         "mapScreen"
+       );
 
-     renderAll();
+       renderAll();
 
-     setMessage(
-       "全員倒れてしまった……。パチモンセンターで回復しました。"
-     );
+       setMessage(
+         "全員倒れてしまった……。パチモンセンターで回復しました。"
+       );
 
-   }
+     }
 
- },800);
+   },
+   800
+ );
 
 }
 
@@ -2741,61 +3280,87 @@ function firstAlive(){
 function battleItems(){
 
  let html=`
-   <h2>🎒 どうぐ</h2>
+
+   <h2>
+     🎒 どうぐ
+   </h2>
+
  `;
 
- if(state.items.potion>0){
+ if(
+   state.items.potion>0
+ ){
 
    html+=`
+
      <button
        style="width:100%"
        onclick="usePotion('potion')"
      >
-       キズぐすり ×${state.items.potion}
+       キズぐすり
+       ×${state.items.potion}
      </button>
+
    `;
 
  }
 
- if(state.items.superPotion>0){
+ if(
+   state.items.superPotion>0
+ ){
 
    html+=`
+
      <button
        style="width:100%"
        onclick="usePotion('superPotion')"
      >
-       いいキズぐすり ×${state.items.superPotion}
+       いいキズぐすり
+       ×${state.items.superPotion}
      </button>
+
    `;
 
  }
 
- ["capsule","superCapsule","hyperCapsule"]
- .forEach(key=>{
+ [
+   "capsule",
+   "superCapsule",
+   "hyperCapsule"
+ ]
+ .forEach(
+   key=>{
 
-   if(state.items[key]>0){
+     if(
+       state.items[key]>0
+     ){
 
-     html+=`
-       <button
-         style="width:100%"
-         onclick="useCapsule('${key}')"
-       >
-         ${ITEMS[key].name}
-         ×${state.items[key]}
-       </button>
-     `;
+       html+=`
+
+         <button
+           style="width:100%"
+           onclick="useCapsule('${key}')"
+         >
+           ${ITEMS[key].name}
+           ×${state.items[key]}
+         </button>
+
+       `;
+
+     }
 
    }
-
- });
+ );
 
  html+=`
+
    <button
      style="width:100%"
      onclick="closeModal()"
    >
      戻る
    </button>
+
  `;
 
  openModal(html);
@@ -2808,32 +3373,44 @@ function battleItems(){
 
 function usePotion(type){
 
- if(state.items[type]<=0) return;
+ if(
+   state.items[type]<=0
+ ) return;
 
  const player=
-   state.party[state.battle.playerIndex];
+   state.party[
+     state.battle.playerIndex
+   ];
 
  if(player.hp<=0){
 
-   alert("ひんし状態では使えません。");
+   alert(
+     "ひんし状態では使えません。"
+   );
 
    return;
 
  }
 
- if(player.hp>=player.maxHp){
+ if(
+   player.hp>=player.maxHp
+ ){
 
-   alert("HPは満タンです。");
+   alert(
+     "HPは満タンです。"
+   );
 
    return;
 
  }
 
- const item=ITEMS[type];
+ const item=
+   ITEMS[type];
 
  state.items[type]--;
 
- const before=player.hp;
+ const before=
+   player.hp;
 
  player.hp=
    Math.min(
@@ -2852,9 +3429,12 @@ function usePotion(type){
 
  renderBattle();
 
- setTimeout(()=>{
-   enemyAttack();
- },600);
+ setTimeout(
+   ()=>{
+     enemyAttack();
+   },
+   600
+ );
 
 }
 
@@ -2864,19 +3444,22 @@ function usePotion(type){
 
 function useCapsule(type){
 
- if(state.items[type]<=0) return;
+ if(
+   state.items[type]<=0
+ ) return;
 
- const battle=state.battle;
+ const battle=
+   state.battle;
 
- const enemy=battle.enemy;
+ const enemy=
+   battle.enemy;
 
- const player=
-   state.party[battle.playerIndex];
-
- if(state.party.length>=4){
+ if(
+   state.party.length>=4
+ ){
 
    alert(
-     "手持ちが4匹なので捕まえられません。BOXに送る機能は次回のボタンから対応できます。"
+     "手持ちが4匹なので捕まえられません。先にBOXへ預けてください。"
    );
 
    return;
@@ -2885,15 +3468,13 @@ function useCapsule(type){
 
  state.items[type]--;
 
- const item=ITEMS[type];
-
- /*
-   HPが低いほど捕獲しやすい
- */
+ const item=
+   ITEMS[type];
 
  const hpFactor=
    1-
-   enemy.hp/enemy.maxHp;
+   enemy.hp/
+   enemy.maxHp;
 
  const chance=
    clamp(
@@ -2904,7 +3485,9 @@ function useCapsule(type){
      0.90
    );
 
- if(Math.random()<chance){
+ if(
+   Math.random()<chance
+ ){
 
    state.party.push(enemy);
 
@@ -2918,27 +3501,35 @@ function useCapsule(type){
 
    renderBattle();
 
-   setTimeout(()=>{
+   setTimeout(
+     ()=>{
 
-     setBattleText(
-       `${getMonsterName(enemy)}を捕まえた！`
-     );
+       setBattleText(
+         `${getMonsterName(enemy)}を捕まえた！`
+       );
 
-   },500);
+     },
+     500
+   );
 
-   setTimeout(()=>{
+   setTimeout(
+     ()=>{
 
-     state.battle=null;
+       state.battle=null;
 
-     showScreen("mapScreen");
+       showScreen(
+         "mapScreen"
+       );
 
-     renderAll();
+       renderAll();
 
-     setMessage(
-       `${getMonsterName(enemy)}が仲間になりました！`
-     );
+       setMessage(
+         `${getMonsterName(enemy)}が仲間になりました！`
+       );
 
-   },1300);
+     },
+     1300
+   );
 
  }else{
 
@@ -2950,9 +3541,12 @@ function useCapsule(type){
 
    renderBattle();
 
-   setTimeout(()=>{
-     enemyAttack();
-   },700);
+   setTimeout(
+     ()=>{
+       enemyAttack();
+     },
+     700
+   );
 
  }
 
@@ -2964,11 +3558,15 @@ function useCapsule(type){
 
 function battleRun(){
 
- if(Math.random()<0.95){
+ if(
+   Math.random()<0.95
+ ){
 
    state.battle=null;
 
-   showScreen("mapScreen");
+   showScreen(
+     "mapScreen"
+   );
 
    renderAll();
 
@@ -2982,9 +3580,12 @@ function battleRun(){
      "逃げられない！"
    );
 
-   setTimeout(()=>{
-     enemyAttack();
-   },600);
+   setTimeout(
+     ()=>{
+       enemyAttack();
+     },
+     600
+   );
 
  }
 
@@ -2996,8 +3597,9 @@ function battleRun(){
 
 function setBattleText(text){
 
- document.getElementById("battleText")
-   .innerHTML=text;
+ document.getElementById(
+   "battleText"
+ ).innerHTML=text;
 
 }
 
@@ -3011,7 +3613,8 @@ function openShop(){
 
  renderShop();
 
- document.getElementById("shopPanel")
+ document
+   .getElementById("shopPanel")
    .classList.add("active");
 
 }
@@ -3023,43 +3626,52 @@ function renderShop(){
 
  area.innerHTML="";
 
- Object.keys(ITEMS).forEach(key=>{
+ Object.keys(ITEMS)
+   .forEach(
+     key=>{
 
-   const item=ITEMS[key];
+       const item=
+         ITEMS[key];
 
-   const div=
-     document.createElement("div");
+       const div=
+         document.createElement("div");
 
-   div.className="shopItem";
+       div.className=
+         "shopItem";
 
-   div.innerHTML=`
+       div.innerHTML=`
 
-     <h3>${item.name}</h3>
+         <h3>
+           ${item.name}
+         </h3>
 
-     <p class="small">
-       ${item.desc}
-     </p>
+         <p class="small">
+           ${item.desc}
+         </p>
 
-     <div>
-       所持：
-       <b>${state.items[key]||0}</b>
-     </div>
+         <div>
+           所持：
+           <b>
+             ${state.items[key]||0}
+           </b>
+         </div>
 
-     <div class="price">
-       ${item.price}円
-     </div>
+         <div class="price">
+           ${item.price}円
+         </div>
 
-     <button
-       onclick="buyItem('${key}')"
-     >
-       購入
-     </button>
+         <button
+           onclick="buyItem('${key}')"
+         >
+           購入
+         </button>
 
-   `;
+       `;
 
-   area.appendChild(div);
+       area.appendChild(div);
 
- });
+     }
+   );
 
 }
 
@@ -3069,17 +3681,23 @@ function renderShop(){
 
 function buyItem(key){
 
- const item=ITEMS[key];
+ const item=
+   ITEMS[key];
 
- if(state.money<item.price){
+ if(
+   state.money<item.price
+ ){
 
-   alert("お金が足りません。");
+   alert(
+     "お金が足りません。"
+   );
 
    return;
 
  }
 
- state.money-=item.price;
+ state.money-=
+   item.price;
 
  state.items[key]=
    (state.items[key]||0)+1;
@@ -3098,7 +3716,9 @@ function sellItems(){
 
  let html=`
 
-   <h2>💰 道具を売る</h2>
+   <h2>
+     💰 道具を売る
+   </h2>
 
    <p>
      持っている道具を半額で売却できます。
@@ -3106,31 +3726,36 @@ function sellItems(){
 
  `;
 
- Object.keys(ITEMS).forEach(key=>{
+ Object.keys(ITEMS)
+   .forEach(
+     key=>{
 
-   const item=ITEMS[key];
+       const item=
+         ITEMS[key];
 
-   const count=
-     state.items[key]||0;
+       const count=
+         state.items[key]||0;
 
-   if(count>0){
+       if(count>0){
 
-     html+=`
+         html+=`
 
-       <button
-         style="width:100%"
-         onclick="sellItem('${key}')"
-       >
-         ${item.name}
-         ×${count}
-         ／ ${item.sell}円
-       </button>
+           <button
+             style="width:100%"
+             onclick="sellItem('${key}')"
+           >
+             ${item.name}
+             ×${count}
+             ／
+             ${item.sell}円
+           </button>
 
-     `;
+         `;
 
-   }
+       }
 
- });
+     }
+   );
 
  html+=`
 
@@ -3149,10 +3774,13 @@ function sellItems(){
 
 function sellItem(key){
 
- const item=ITEMS[key];
+ const item=
+   ITEMS[key];
 
- if(!state.items[key] ||
-    state.items[key]<=0){
+ if(
+   !state.items[key] ||
+   state.items[key]<=0
+ ){
 
    return;
 
@@ -3160,7 +3788,8 @@ function sellItem(key){
 
  state.items[key]--;
 
- state.money+=item.sell;
+ state.money+=
+   item.sell;
 
  renderShop();
 
@@ -3176,7 +3805,8 @@ function sellItem(key){
 
 function openMainMenu(){
 
- document.getElementById("mainMenu")
+ document
+   .getElementById("mainMenu")
    .classList.add("active");
 
 }
@@ -3187,27 +3817,33 @@ function openMainMenu(){
 
 function openModal(html){
 
- document.getElementById("modalContent")
+ document
+   .getElementById("modalContent")
    .innerHTML=html;
 
- document.getElementById("modal")
+ document
+   .getElementById("modal")
    .classList.add("active");
 
 }
 
 function closeModal(){
 
- document.getElementById("modal")
+ document
+   .getElementById("modal")
    .classList.remove("active");
 
 }
 
 function closeOverlays(){
 
- document.querySelectorAll(".overlay")
-   .forEach(el=>{
-     el.classList.remove("active");
-   });
+ document
+   .querySelectorAll(".overlay")
+   .forEach(
+     el=>{
+       el.classList.remove("active");
+     }
+   );
 
 }
 
@@ -3215,7 +3851,9 @@ function closeOverlays(){
    セーブ
 ========================================================= */
 
-function saveGame(showMessage=true){
+function saveGame(
+  showMessage=true
+){
 
  try{
 
@@ -3226,13 +3864,19 @@ function saveGame(showMessage=true){
 
    if(showMessage){
 
-     alert("セーブしました！");
+     alert(
+       "セーブしました！"
+     );
 
    }
 
  }catch(e){
 
-   alert("セーブに失敗しました。");
+   console.error(e);
+
+   alert(
+     "セーブに失敗しました。"
+   );
 
  }
 
@@ -3247,9 +3891,15 @@ function loadGame(){
  try{
 
    const saved=
-     localStorage.getItem("pachimonsave");
+     localStorage.getItem(
+       "pachimonsave"
+     );
 
-   if(!saved) return false;
+   if(!saved){
+
+     return false;
+
+   }
 
    const data=
      JSON.parse(saved);
@@ -3260,7 +3910,9 @@ function loadGame(){
      古いセーブデータ対策
    */
 
-   if(!state.boxes){
+   if(
+     !Array.isArray(state.boxes)
+   ){
 
      state.boxes=
        Array.from(
@@ -3270,25 +3922,108 @@ function loadGame(){
 
    }
 
-   if(!state.items){
+   while(
+     state.boxes.length<5
+   ){
+
+     state.boxes.push(
+       Array(20).fill(null)
+     );
+
+   }
+
+   state.boxes=
+     state.boxes.slice(0,5);
+
+   state.boxes=
+     state.boxes.map(
+       box=>{
+
+         if(
+           !Array.isArray(box)
+         ){
+
+           return Array(20).fill(null);
+
+         }
+
+         while(
+           box.length<20
+         ){
+
+           box.push(null);
+
+         }
+
+         return box.slice(0,20);
+
+       }
+     );
+
+   if(
+     !state.items
+   ){
 
      state.items={
+
        potion:5,
        superPotion:0,
        capsule:5,
        superCapsule:2,
        hyperCapsule:1
+
      };
 
    }
 
-   if(!state.dex){
+   if(
+     !Array.isArray(state.dex)
+   ){
+
      state.dex=[];
+
+   }
+
+   if(
+     !Array.isArray(state.party)
+   ){
+
+     state.party=[];
+
+   }
+
+   if(
+     typeof state.money!=="number"
+   ){
+
+     state.money=1000;
+
+   }
+
+   if(
+     typeof state.steps!=="number"
+   ){
+
+     state.steps=0;
+
+   }
+
+   if(
+     typeof state.map!=="number" ||
+     !MAPS[state.map]
+   ){
+
+     state.map=0;
+     state.x=5;
+     state.y=6;
+
    }
 
    return true;
 
  }catch(e){
+
+   console.error(e);
 
    return false;
 
@@ -3333,9 +4068,13 @@ function renderAll(){
    初期化
 ========================================================= */
 
-if(loadGame()){
+if(
+  loadGame()
+){
 
- showScreen("mapScreen");
+ showScreen(
+   "mapScreen"
+ );
 
  renderAll();
 
@@ -3345,11 +4084,11 @@ if(loadGame()){
 
 }else{
 
- showScreen("titleScreen");
+ showScreen(
+   "titleScreen"
+ );
 
 }
 
-</script>
-
-</body>
+</script></body>
 </html>
