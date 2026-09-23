@@ -1,44 +1,81 @@
 <!doctype html>
-
 <html lang="ja">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>パチッとモンスター</title><style>
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+>
+
+<title>パチッとモンスター</title>
+
+<style>
+
+/* =========================================================
+   基本
+========================================================= */
+
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
 }
 
+html,
 body{
   margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
   background:#111;
   color:#fff;
+
   font-family:
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  overflow:hidden;
 }
 
 button{
   font:inherit;
   touch-action:manipulation;
+  cursor:pointer;
 }
+
+button:active{
+  transform:translateY(2px);
+}
+
+/* =========================================================
+   ゲーム本体
+========================================================= */
 
 #game{
   width:100vw;
   height:100vh;
+
   max-width:900px;
+
   margin:auto;
+
   position:relative;
-  background:#79b95b;
+
+  background:#72bb5c;
+
   overflow:hidden;
 }
 
 .screen{
   position:absolute;
+
   inset:0;
+
   display:none;
 }
 
@@ -46,107 +83,183 @@ button{
   display:block;
 }
 
-/* =========================
+/* =========================================================
    タイトル
-========================= */
+========================================================= */
 
 #titleScreen{
+
   background:
-    radial-gradient(circle at 50% 30%,#fff 0,#ffe36e 8%,transparent 9%),
-    linear-gradient(#62b7e8,#9ee0ff 50%,#70c65a 50%);
+    radial-gradient(
+      circle at 50% 30%,
+      #fff 0,
+      #ffe36e 8%,
+      transparent 9%
+    ),
+    linear-gradient(
+      #62b7e8,
+      #9ee0ff 50%,
+      #70c65a 50%
+    );
+
   text-align:center;
-  padding:40px 20px;
+
+  padding:30px 15px;
+
+  overflow:auto;
 }
 
 .title{
-  margin-top:10vh;
-  font-size:clamp(42px,11vw,85px);
+
+  margin-top:7vh;
+
+  font-size:
+    clamp(42px,11vw,85px);
+
   font-weight:900;
+
   color:#fff;
+
   text-shadow:
     4px 4px 0 #333,
     -2px -2px 0 #333,
     2px -2px 0 #333,
     -2px 2px 0 #333;
+
   transform:rotate(-2deg);
 }
 
 .subtitle{
-  margin-top:10px;
-  font-size:20px;
+
+  margin-top:8px;
+
+  font-size:
+    clamp(16px,4vw,22px);
+
   font-weight:bold;
+
   color:#222;
 }
 
 .startBox{
-  margin:50px auto 0;
-  max-width:500px;
+
+  margin:35px auto 0;
+
+  width:min(500px,94vw);
+
   background:#fff;
+
   color:#222;
-  border:5px solid #222;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 8px 0 #333;
+
+  border:4px solid #222;
+
+  border-radius:16px;
+
+  padding:16px;
+
+  box-shadow:0 7px 0 #333;
 }
 
 .startBox h2{
+
   margin:0 0 15px;
+
+  font-size:
+    clamp(18px,5vw,25px);
 }
 
 .starterButtons{
+
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:7px;
 }
 
 .starterBtn{
+
   border:3px solid #222;
+
   background:#f7f7f7;
-  border-radius:12px;
-  padding:12px 4px;
-  font-size:16px;
-  cursor:pointer;
+
+  color:#222;
+
+  border-radius:11px;
+
+  padding:10px 3px;
+
+  font-size:
+    clamp(13px,3.5vw,17px);
+
+  font-weight:bold;
 }
 
 .starterBtn .icon{
+
   display:block;
-  font-size:42px;
+
+  font-size:
+    clamp(32px,10vw,45px);
+
+  margin-bottom:3px;
 }
 
-.starterBtn:active{
-  transform:translateY(3px);
-}
-
-/* =========================
-   共通HUD
-========================= */
+/* =========================================================
+   マップ
+========================================================= */
 
 #mapScreen{
   background:#72bb5c;
 }
 
+/* =========================================================
+   HUD
+========================================================= */
+
 #hud{
+
   position:absolute;
+
   top:0;
   left:0;
   right:0;
-  z-index:20;
-  background:rgba(20,20,20,.88);
-  padding:7px 9px;
+
+  height:42px;
+
+  z-index:50;
+
+  background:rgba(20,20,20,.92);
+
+  padding:
+    5px 10px;
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
-  font-size:13px;
+
+  font-size:
+    clamp(12px,3.3vw,15px);
+
+  border-bottom:2px solid #111;
 }
 
 .hudLeft{
+
   display:flex;
-  gap:8px;
+
+  gap:10px;
+
   align-items:center;
 }
 
 .hudMoney{
+
   color:#ffe66d;
+
   font-weight:bold;
 }
 
@@ -154,51 +267,71 @@ button{
   font-weight:bold;
 }
 
-/* =========================
-   マップ
-========================= */
+/* =========================================================
+   マップエリア
+========================================================= */
 
 #mapArea{
+
   position:absolute;
+
   top:42px;
   left:0;
   right:0;
-  bottom:150px;
+
+  bottom:166px;
 
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
   overflow:hidden;
-  padding:4px;
+
+  padding:5px;
 }
 
 .mapGrid{
+
   display:grid;
+
   gap:1px;
+
   background:#333;
+
   border:4px solid #333;
 
-  /*
-    マップが画面からはみ出さないようにする
-  */
-  width:min(96vw,calc(100vh - 210px));
-  height:min(96vw,calc(100vh - 210px));
+  width:min(
+    94vw,
+    calc(100vh - 235px)
+  );
+
+  height:min(
+    94vw,
+    calc(100vh - 235px)
+  );
 
   aspect-ratio:1 / 1;
+
+  flex-shrink:0;
 }
 
 .tile{
+
   min-width:0;
   min-height:0;
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
-  font-size:clamp(14px,4vw,30px);
+  font-size:
+    clamp(12px,4vw,28px);
 
   user-select:none;
+
   overflow:hidden;
 }
 
@@ -243,141 +376,202 @@ button{
 }
 
 .mapPlayerIcon{
-  font-size:clamp(18px,5vw,30px);
+
+  font-size:
+    clamp(17px,5vw,30px);
+
   z-index:2;
 }
 
-/* =========================
-   メッセージ
-========================= */
+/* =========================================================
+   マップメッセージ
+========================================================= */
 
 #message{
+
   position:absolute;
+
   left:8px;
   right:8px;
-  bottom:155px;
+
+  bottom:171px;
+
   min-height:38px;
 
-  background:rgba(0,0,0,.78);
+  max-height:58px;
+
+  overflow:hidden;
+
+  background:rgba(0,0,0,.82);
+
   border:2px solid #fff;
-  border-radius:8px;
 
-  padding:8px 10px;
+  border-radius:9px;
 
-  z-index:10;
-  font-size:14px;
+  padding:7px 9px;
 
-  pointer-events:none;
+  z-index:40;
+
+  font-size:
+    clamp(12px,3.5vw,15px);
+
+  display:flex;
+
+  align-items:center;
 }
 
-/* =========================
-   操作パネル
-========================= */
+/* =========================================================
+   操作エリア
+========================================================= */
 
 #controls{
+
   position:absolute;
+
   left:0;
   right:0;
   bottom:0;
 
-  height:150px;
+  height:166px;
 
   background:#222;
+
   border-top:4px solid #111;
 
-  z-index:30;
+  z-index:60;
+
+  padding:8px;
+
 }
 
-.dpad{
-  position:absolute;
-  left:15px;
-  bottom:14px;
+/* =========================================================
+   十字キー
+========================================================= */
 
-  width:135px;
-  height:120px;
-  position:relative;
-top:-20px;
+.dpad{
+
+  position:absolute;
+
+  left:10px;
+  top:17px;
+
+  width:126px;
+  height:126px;
 }
 
 .dpad button{
+
   position:absolute;
 
-  width:45px;
-  height:40px;
+  width:42px;
+  height:42px;
+
+  padding:0;
 
   border:2px solid #111;
+
   border-radius:7px;
 
   background:#ddd;
+
   color:#111;
 
-  font-size:22px;
+  font-size:21px;
+
   font-weight:bold;
+
+  box-shadow:
+    0 2px 0 #000;
 }
 
 #up{
-  left:45px;
+  left:42px;
   top:0;
 }
 
 #left{
   left:0;
-  top:40px;
+  top:42px;
 }
 
 #right{
   right:0;
-  top:40px;
+  top:42px;
 }
 
 #down{
-  left:45px;
+  left:42px;
   bottom:0;
 }
 
-.menuButtons{
-  position:absolute;
-  right:8px;
-  bottom:8px;
+/* =========================================================
+   メニューボタン
+========================================================= */
 
-  width:calc(100% - 165px);
+.menuButtons{
+
+  position:absolute;
+
+  left:148px;
+  right:8px;
+
+  top:17px;
+
+  height:126px;
 
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:5px;
-  position:relative;
-top:-20px;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  grid-template-rows:
+    repeat(2,1fr);
+
+  gap:6px;
 }
 
 .menuButtons button{
-  padding:8px 4px;
+
+  min-height:0;
 
   border:2px solid #111;
-  border-radius:7px;
+
+  border-radius:8px;
 
   background:#eee;
+
   color:#111;
 
   font-weight:bold;
+
+  font-size:
+    clamp(12px,3.7vw,16px);
+
+  box-shadow:
+    0 2px 0 #000;
 }
 
-/* =========================
+/* =========================================================
    オーバーレイ
-========================= */
+========================================================= */
 
 .overlay{
+
   position:absolute;
+
   inset:0;
 
-  background:rgba(0,0,0,.75);
+  background:
+    rgba(0,0,0,.72);
 
   z-index:100;
 
   display:none;
+
   align-items:center;
   justify-content:center;
 
-  padding:15px;
+  padding:12px;
 }
 
 .overlay.active{
@@ -385,62 +579,87 @@ top:-20px;
 }
 
 .panel{
+
   width:min(700px,96vw);
+
   max-height:92vh;
 
   overflow:auto;
 
   background:#f5f5f5;
+
   color:#222;
 
   border:4px solid #222;
+
   border-radius:14px;
 
-  padding:15px;
+  padding:13px;
+
+  box-shadow:
+    0 8px 0 rgba(0,0,0,.4);
 }
 
 .panel h2{
+
   margin:0 0 12px;
+
+  font-size:
+    clamp(20px,5vw,28px);
 }
 
 .panel button{
+
   border:2px solid #222;
+
   border-radius:8px;
 
   background:#fff;
 
+  color:#222;
+
   padding:9px;
+
   margin:3px;
 
-  cursor:pointer;
 }
 
 .closeBtn{
+
   width:100%;
 
   background:#333 !important;
+
   color:#fff !important;
 
   margin-top:10px !important;
 }
 
-/* =========================
+/* =========================================================
    パーティー
-========================= */
+========================================================= */
 
 .monsterList{
+
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+
+  grid-template-columns:
+    repeat(2,1fr);
+
   gap:7px;
 }
 
 .monsterCard{
+
   border:3px solid #333;
+
   border-radius:10px;
 
   padding:8px;
 
   background:#fff;
+
+  min-height:100px;
 }
 
 .monsterCard.dead{
@@ -448,44 +667,61 @@ top:-20px;
 }
 
 .monsterIcon{
+
   font-size:35px;
+
   float:left;
+
   margin-right:8px;
 }
 
 .hpbar{
-  height:10px;
+
+  height:11px;
 
   background:#ccc;
+
   border:1px solid #333;
-  border-radius:5px;
+
+  border-radius:6px;
 
   overflow:hidden;
 
-  margin-top:4px;
+  margin-top:5px;
 }
 
 .hpfill{
+
   height:100%;
+
   background:#48a848;
+
+  transition:
+    width .25s ease;
 }
 
 .small{
   font-size:12px;
 }
 
-/* =========================
+/* =========================================================
    図鑑
-========================= */
+========================================================= */
 
 .dexGrid{
+
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+
+  grid-template-columns:
+    repeat(2,1fr);
+
   gap:6px;
 }
 
 .dexItem{
+
   border:2px solid #555;
+
   border-radius:8px;
 
   padding:7px;
@@ -499,13 +735,16 @@ top:-20px;
   color:#888;
 }
 
-/* =========================
+/* =========================================================
    BOX
-========================= */
+========================================================= */
 
 .boxTabs{
+
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+
+  grid-template-columns:
+    repeat(5,1fr);
 
   gap:3px;
 
@@ -513,29 +752,38 @@ top:-20px;
 }
 
 .boxTabs button{
+
   margin:0;
+
   padding:6px 2px;
 }
 
 .boxGrid{
+
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+
+  grid-template-columns:
+    repeat(5,1fr);
 
   gap:5px;
 }
 
 .boxSlot{
+
   min-height:70px;
 
   border:2px solid #777;
+
   border-radius:7px;
 
   background:#ddd;
 
   display:flex;
+
   flex-direction:column;
 
   align-items:center;
+
   justify-content:center;
 
   text-align:center;
@@ -544,7 +792,9 @@ top:-20px;
 }
 
 .boxSlot.occupied{
+
   background:#fff;
+
   border-color:#222;
 }
 
@@ -552,110 +802,228 @@ top:-20px;
   font-size:25px;
 }
 
-/* =========================
-   戦闘
-========================= */
+/* =========================================================
+   戦闘画面
+========================================================= */
 
 #battleScreen{
+
   background:
     linear-gradient(
-      #a7d8f2 0 45%,
-      #82c56b 45% 100%
+      #a7d8f2 0 48%,
+      #82c56b 48% 100%
     );
+
+  overflow:hidden;
 }
 
-/*
-  野生パチモン情報
-*/
-.battleTop{
+/* =========================================================
+   戦闘フィールド
+========================================================= */
+
+.battleField{
+
   position:absolute;
 
-  top:24%;
-  right:5%;
+  top:0;
+  left:0;
+  right:0;
 
-  width:42%;
+  bottom:175px;
+
+  overflow:hidden;
+}
+
+/* =========================================================
+   野生パチモン
+========================================================= */
+
+.battleEnemy{
+
+  position:absolute;
+
+  top:8%;
+
+  right:7%;
+
+  width:45%;
+
+  z-index:10;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+}
+
+#wildIcon{
+
+  position:relative;
+
+  font-size:
+    clamp(65px,18vw,110px);
+
+  line-height:1;
+
+  margin-bottom:8px;
+
+  order:1;
+}
+
+.battleTop{
+
+  position:relative;
+
+  top:auto;
+  right:auto;
+
+  width:100%;
 
   background:#fff;
+
   color:#222;
 
   border:3px solid #222;
+
   border-radius:10px;
 
-  padding:8px;
+  padding:7px;
 
-  z-index:10;
+  order:2;
+
+  box-shadow:
+    0 3px 0 rgba(0,0,0,.25);
 }
 
-/*
-  野生パチモン本体
-*/
-#wildIcon{
-  position:absolute;
+.battleNameRow{
 
-  top:24%;
-  right:48%;
+  display:flex;
 
-  width:auto;
-  height:auto;
+  justify-content:space-between;
 
-  font-size:80px;
+  align-items:center;
 
-  z-index:10;
+  gap:5px;
 
-  display:block;
+  font-size:
+    clamp(13px,4vw,17px);
 }
 
-/*
-  プレイヤー側情報
-*/
-.battleBottom{
+/* =========================================================
+   プレイヤー側
+========================================================= */
+
+.battlePlayer{
+
   position:absolute;
 
-  left:12px;
-  bottom:260px;
+  left:7%;
+
+  bottom:6%;
 
   width:48%;
 
-  background:#fff;
-  color:#222;
+  z-index:12;
 
-  border:3px solid #222;
-  border-radius:10px;
+  display:flex;
 
-  padding:8px;
+  flex-direction:column;
 
-  z-index:15;
-}
-
-/*
-  戦闘中のパチモン画像
-*/
-.battleMonster{
-  text-align:center;
-  font-size:80px;
-
-  position:absolute;
+  align-items:center;
 }
 
 #playerIcon{
-  left:18%;
-  bottom:35%;
 
-  z-index:10;
+  position:relative;
+
+  left:auto;
+  bottom:auto;
+
+  font-size:
+    clamp(65px,18vw,105px);
+
+  line-height:1;
+
+  margin-bottom:8px;
+
+  order:1;
 }
 
-/* =========================
+.battleBottom{
+
+  position:relative;
+
+  left:auto;
+  bottom:auto;
+
+  width:100%;
+
+  background:#fff;
+
+  color:#222;
+
+  border:3px solid #222;
+
+  border-radius:10px;
+
+  padding:7px;
+
+  order:2;
+
+  box-shadow:
+    0 3px 0 rgba(0,0,0,.25);
+}
+
+/* =========================================================
+   戦闘テキスト
+========================================================= */
+
+.battleText{
+
+  position:absolute;
+
+  left:8px;
+  right:8px;
+
+  bottom:180px;
+
+  background:
+    rgba(0,0,0,.88);
+
+  color:#fff;
+
+  border:2px solid #fff;
+
+  border-radius:9px;
+
+  padding:8px;
+
+  z-index:30;
+
+  min-height:45px;
+
+  max-height:70px;
+
+  overflow:auto;
+
+  font-size:
+    clamp(12px,3.5vw,15px);
+}
+
+/* =========================================================
    戦闘メニュー
-========================= */
+========================================================= */
 
 .battleMenu{
+
   position:absolute;
 
   left:0;
   right:0;
   bottom:0;
 
-  height:165px;
+  height:175px;
 
   background:#222;
 
@@ -663,58 +1031,134 @@ top:-20px;
 
   padding:8px;
 
-  z-index:20;
+  z-index:25;
 }
 
 .battleButtons{
+
   display:grid;
 
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:
+    repeat(2,1fr);
 
-  gap:6px;
+  grid-template-rows:
+    repeat(2,1fr);
+
+  gap:7px;
+
+  height:100%;
 }
 
 .battleButtons button{
-  padding:10px;
+
+  padding:8px;
 
   border:2px solid #111;
-  border-radius:7px;
+
+  border-radius:9px;
+
+  background:#eee;
+
+  color:#111;
 
   font-weight:bold;
+
+  font-size:
+    clamp(14px,4vw,18px);
+
+  box-shadow:
+    0 2px 0 #000;
 }
 
-.battleText{
-  position:absolute;
+/* =========================================================
+   技一覧
+========================================================= */
 
-  left:8px;
-  right:8px;
-  bottom:168px;
+.moveButton{
 
-  background:rgba(0,0,0,.85);
+  width:100%;
 
-  border:2px solid #fff;
-  border-radius:8px;
+  text-align:left;
 
-  padding:9px;
+  margin:4px 0 !important;
 
-  z-index:25;
+  padding:10px !important;
 
-  min-height:42px;
+  display:block;
 }
 
-/* =========================
+.moveName{
+
+  font-weight:bold;
+
+  font-size:16px;
+}
+
+.moveInfo{
+
+  margin-top:3px;
+
+  color:#555;
+
+  font-size:12px;
+}
+
+/* =========================================================
+   パチモン交換
+========================================================= */
+
+.switchList{
+
+  display:grid;
+
+  gap:6px;
+
+  margin-top:8px;
+}
+
+.switchButton{
+
+  width:100%;
+
+  text-align:left;
+
+  padding:10px !important;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+}
+
+.switchIcon{
+
+  font-size:35px;
+
+  min-width:42px;
+
+  text-align:center;
+}
+
+/* =========================================================
    ショップ
-========================= */
+========================================================= */
 
 .shopItems{
+
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+
+  grid-template-columns:
+    repeat(2,1fr);
 
   gap:8px;
 }
 
 .shopItem{
+
   border:3px solid #333;
+
   border-radius:10px;
 
   padding:10px;
@@ -723,31 +1167,42 @@ top:-20px;
 }
 
 .shopItem h3{
+
   margin:0 0 4px;
 }
 
 .price{
+
   color:#c88a00;
+
   font-weight:bold;
 }
 
-/* =========================
+/* =========================================================
    モーダル
-========================= */
+========================================================= */
 
 .modalBox{
+
   width:min(600px,94vw);
 
+  max-height:88vh;
+
+  overflow:auto;
+
   background:#fff;
+
   color:#222;
 
   border:4px solid #222;
+
   border-radius:12px;
 
-  padding:15px;
+  padding:13px;
 }
 
 .modalButtons{
+
   display:grid;
 
   gap:5px;
@@ -755,324 +1210,690 @@ top:-20px;
   margin-top:10px;
 }
 
-/* =========================
-   レスポンシブ
-========================= */
+/* =========================================================
+   スマホ調整
+========================================================= */
 
 @media(max-width:500px){
 
-  .title{
-    font-size:48px;
+  #controls{
+    height:158px;
   }
 
-  .starterBtn .icon{
-    font-size:32px;
+  #mapArea{
+    bottom:158px;
+  }
+
+  #message{
+    bottom:163px;
+  }
+
+  .mapGrid{
+
+    width:min(
+      94vw,
+      calc(100vh - 225px)
+    );
+
+    height:min(
+      94vw,
+      calc(100vh - 225px)
+    );
+  }
+
+  .dpad{
+
+    left:7px;
+    top:14px;
+
+    width:120px;
+    height:120px;
+  }
+
+  .dpad button{
+
+    width:40px;
+    height:40px;
+  }
+
+  #up,
+  #down{
+    left:40px;
+  }
+
+  #left,
+  #right{
+    top:40px;
+  }
+
+  .menuButtons{
+
+    left:137px;
+
+    top:14px;
+
+    height:120px;
+  }
+
+  .menuButtons button{
+
+    font-size:13px;
   }
 
   .monsterList{
     grid-template-columns:1fr;
   }
 
-  .battleMonster{
-    font-size:65px;
+  .dexGrid{
+    grid-template-columns:1fr;
   }
 
-  #wildIcon{
-    font-size:65px;
+  .shopItems{
+    grid-template-columns:1fr;
   }
 
+  .battleMenu{
+    height:165px;
+  }
+
+  .battleField{
+    bottom:165px;
+  }
+
+  .battleText{
+    bottom:170px;
+  }
+
+  .battleEnemy{
+    top:5%;
+    right:5%;
+    width:47%;
+  }
+
+  .battlePlayer{
+    left:5%;
+    bottom:5%;
+    width:50%;
+  }
+
+  #wildIcon,
   #playerIcon{
     font-size:65px;
   }
 
-  .tile{
-    font-size:6vw;
+}
+
+/* =========================================================
+   横幅が非常に狭い端末
+========================================================= */
+
+@media(max-width:360px){
+
+  #controls{
+    height:145px;
+  }
+
+  #mapArea{
+    bottom:145px;
+  }
+
+  #message{
+    bottom:150px;
+  }
+
+  .dpad{
+
+    width:105px;
+    height:105px;
+
+    top:13px;
+  }
+
+  .dpad button{
+
+    width:35px;
+    height:35px;
+
+    font-size:18px;
+  }
+
+  #up,
+  #down{
+    left:35px;
+  }
+
+  #left,
+  #right{
+    top:35px;
+  }
+
+  .menuButtons{
+
+    left:120px;
+
+    top:13px;
+
+    height:105px;
+  }
+
+  .menuButtons button{
+    font-size:11px;
   }
 
 }
 
-</style></head><body><div id="game"><!-- =========================
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+<!-- =========================================================
      タイトル
-========================= --><div id="titleScreen" class="screen active">  <div class="title">パチモン</div>  <div class="subtitle">
+========================================================= -->
+
+<div id="titleScreen" class="screen active">
+
+  <div class="title">
+    パチモン
+  </div>
+
+  <div class="subtitle">
     パチッとモンスター
-  </div>  <div class="startBox"><h2>最初のパチモンを選ぼう！</h2>
+  </div>
 
-<div class="starterButtons">
+  <div class="startBox">
 
-  <button class="starterBtn" onclick="chooseStarter(1)">
-    <span class="icon">🐣</span>
-    ピヨカラ
-  </button>
+    <h2>
+      最初のパチモンを選ぼう！
+    </h2>
 
-  <button class="starterBtn" onclick="chooseStarter(4)">
-    <span class="icon">🐶</span>
-    イヌヌワン
-  </button>
+    <div class="starterButtons">
 
-  <button class="starterBtn" onclick="chooseStarter(7)">
-    <span class="icon">🐱</span>
-    ネココネコ
-  </button>
+      <button
+        class="starterBtn"
+        onclick="chooseStarter(1)"
+      >
+        <span class="icon">🐣</span>
+        ピヨカラ
+      </button>
+
+      <button
+        class="starterBtn"
+        onclick="chooseStarter(4)"
+      >
+        <span class="icon">🐶</span>
+        イヌヌワン
+      </button>
+
+      <button
+        class="starterBtn"
+        onclick="chooseStarter(7)"
+      >
+        <span class="icon">🐱</span>
+        ネココネコ
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
-  </div></div><!-- =========================
+<!-- =========================================================
      マップ
-========================= --><div id="mapScreen" class="screen">  <div id="hud"><div class="hudLeft">
+========================================================= -->
 
-  <span id="mapName">
-    パチタウン
-  </span>
+<div id="mapScreen" class="screen">
 
-  <span>
-    👣<span id="steps">0</span>
-  </span>
+  <div id="hud">
 
-</div>
+    <div class="hudLeft">
 
-<div>
-  💰
-  <span id="money" class="hudMoney">
-    1000
-  </span>
-  円
-</div>
+      <span id="mapName">
+        パチタウン
+      </span>
 
-  </div>  <div id="mapArea"><div id="mapGrid" class="mapGrid"></div>
+      <span>
+        👣
+        <span id="steps">0</span>
+      </span>
 
-  </div>  <div id="message">
+    </div>
+
+    <div>
+      💰
+      <span
+        id="money"
+        class="hudMoney"
+      >
+        1000
+      </span>
+      円
+    </div>
+
+  </div>
+
+  <div id="mapArea">
+
+    <div
+      id="mapGrid"
+      class="mapGrid"
+    ></div>
+
+  </div>
+
+  <div id="message">
     パチモンの世界へようこそ！
-  </div>  <div id="controls"><div class="dpad">
+  </div>
 
-  <button id="up" onclick="move(0,-1)">
-    ▲
-  </button>
+  <div id="controls">
 
-  <button id="left" onclick="move(-1,0)">
-    ◀
-  </button>
+    <div class="dpad">
 
-  <button id="right" onclick="move(1,0)">
-    ▶
-  </button>
+      <button
+        id="up"
+        onclick="move(0,-1)"
+      >
+        ▲
+      </button>
 
-  <button id="down" onclick="move(0,1)">
-    ▼
-  </button>
+      <button
+        id="left"
+        onclick="move(-1,0)"
+      >
+        ◀
+      </button>
+
+      <button
+        id="right"
+        onclick="move(1,0)"
+      >
+        ▶
+      </button>
+
+      <button
+        id="down"
+        onclick="move(0,1)"
+      >
+        ▼
+      </button>
+
+    </div>
+
+    <div class="menuButtons">
+
+      <button onclick="openDex()">
+        📖 図鑑
+      </button>
+
+      <button onclick="openParty()">
+        👥 手持ち
+      </button>
+
+      <button onclick="openBox()">
+        📦 BOX
+      </button>
+
+      <button onclick="openMainMenu()">
+        ☰ メニュー
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
-<div class="menuButtons">
-
-  <button onclick="openDex()">
-    📖 図鑑
-  </button>
-
-  <button onclick="openParty()">
-    👥 手持ち
-  </button>
-
-  <button onclick="openBox()">
-    📦 BOX
-  </button>
-
-  <button onclick="openMainMenu()">
-    ☰ メニュー
-  </button>
-
-</div>
-
-  </div></div><!-- =========================
+<!-- =========================================================
      メインメニュー
-========================= --><div id="mainMenu" class="overlay">  <div class="panel"><h2>メニュー</h2>
-
-<button onclick="openDex()">
-  📖 パチモン図鑑
-</button>
-
-<button onclick="openParty()">
-  👥 手持ち
-</button>
-
-<button onclick="openBox()">
-  📦 パチモンBOX
-</button>
-
-<button onclick="saveGame()">
-  💾 セーブ
-</button>
-
-<button onclick="resetGame()">
-  🔄 リセット
-</button>
-
-<button
-  class="closeBtn"
-  onclick="closeOverlays()"
->
-  閉じる
-</button>
-
-  </div></div><!-- =========================
-     図鑑
-========================= --><div id="dexPanel" class="overlay">  <div class="panel"><h2>📖 パチモン図鑑</h2>
-
-<div id="dexGrid" class="dexGrid"></div>
-
-<button
-  class="closeBtn"
-  onclick="closeOverlays()"
->
-  閉じる
-</button>
-
-  </div></div><!-- =========================
-     手持ち
-========================= --><div id="partyPanel" class="overlay">  <div class="panel"><h2>👥 手持ちパチモン</h2>
-
-<div id="partyList" class="monsterList"></div>
-
-<button
-  class="closeBtn"
-  onclick="closeOverlays()"
->
-  閉じる
-</button>
-
-  </div></div><!-- =========================
-     BOX
-========================= --><div id="boxPanel" class="overlay">  <div class="panel"><h2>📦 パチモンBOX</h2>
-
-<div id="boxTabs" class="boxTabs"></div>
-
-<div id="boxGrid" class="boxGrid"></div>
-
-<button
-  class="closeBtn"
-  onclick="closeOverlays()"
->
-  閉じる
-</button>
-
-  </div></div><!-- =========================
-     戦闘
-========================= --><div id="battleScreen" class="screen">  <div class="battleTop"><b id="wildName">
-  野生のパチモン
-</b>
-
-<div>
-  Lv.<span id="wildLevel">5</span>
-</div>
-
-<div class="hpbar">
-
-  <div
-    id="wildHpFill"
-    class="hpfill"
-  ></div>
-
-</div>
-
-<div class="small">
-
-  HP
-  <span id="wildHp">20</span>
-  /
-  <span id="wildMaxHp">20</span>
-
-</div>
-
-  </div>  <div
-    id="wildIcon"
-    class="battleMonster"
-  >
-    🐣
-  </div>  <div
-    id="playerIcon"
-    class="battleMonster"
-  >
-    🐣
-  </div>  <div class="battleBottom"><b id="playerNameBattle">
-  ピヨカラ
-</b>
-
-<div>
-  Lv.<span id="playerLevelBattle">5</span>
-</div>
-
-<div class="hpbar">
-
-  <div
-    id="playerHpFill"
-    class="hpfill"
-  ></div>
-
-</div>
-
-<div class="small">
-
-  HP
-  <span id="playerHpBattle">20</span>
-  /
-  <span id="playerMaxHpBattle">20</span>
-
-</div>
-
-  </div>  <div
-    id="battleText"
-    class="battleText"
-  >
-    野生のパチモンが現れた！
-  </div>  <div class="battleMenu"><div
-  id="battleButtons"
-  class="battleButtons"
->
-
-  <button onclick="battleFight()">
-    ⚔️ たたかう
-  </button>
-
-  <button onclick="battleItems()">
-    🎒 どうぐ
-  </button>
-
-  <button onclick="battleRun()">
-    🏃 逃げる
-  </button>
-
-</div>
-
-  </div></div><!-- =========================
-     ショップ
-========================= --><div id="shopPanel" class="overlay">  <div class="panel"><h2>🏥 パチモンセンター</h2>
-
-<p>
-  パチモンセンターへようこそ！<br>
-  パチモンの回復と道具の売買ができます。
-</p>
+========================================================= -->
 
 <div
-  id="shopItems"
-  class="shopItems"
-></div>
-
-<button onclick="sellItems()">
-  💰 道具を売る
-</button>
-
-<button
-  class="closeBtn"
-  onclick="closeOverlays()"
+  id="mainMenu"
+  class="overlay"
 >
-  閉じる
-</button>
 
-  </div></div><!-- =========================
+  <div class="panel">
+
+    <h2>
+      ☰ メニュー
+    </h2>
+
+    <button onclick="openDex()">
+      📖 パチモン図鑑
+    </button>
+
+    <button onclick="openParty()">
+      👥 手持ち
+    </button>
+
+    <button onclick="openBox()">
+      📦 パチモンBOX
+    </button>
+
+    <button onclick="saveGame()">
+      💾 セーブ
+    </button>
+
+    <button onclick="resetGame()">
+      🔄 リセット
+    </button>
+
+    <button
+      class="closeBtn"
+      onclick="closeOverlays()"
+    >
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     図鑑
+========================================================= -->
+
+<div
+  id="dexPanel"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      📖 パチモン図鑑
+    </h2>
+
+    <div
+      id="dexGrid"
+      class="dexGrid"
+    ></div>
+
+    <button
+      class="closeBtn"
+      onclick="closeOverlays()"
+    >
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     手持ち
+========================================================= -->
+
+<div
+  id="partyPanel"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      👥 手持ちパチモン
+    </h2>
+
+    <div
+      id="partyList"
+      class="monsterList"
+    ></div>
+
+    <button
+      class="closeBtn"
+      onclick="closeOverlays()"
+    >
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     BOX
+========================================================= -->
+
+<div
+  id="boxPanel"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      📦 パチモンBOX
+    </h2>
+
+    <div
+      id="boxTabs"
+      class="boxTabs"
+    ></div>
+
+    <div
+      id="boxGrid"
+      class="boxGrid"
+    ></div>
+
+    <button
+      class="closeBtn"
+      onclick="closeOverlays()"
+    >
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     戦闘
+========================================================= -->
+
+<div
+  id="battleScreen"
+  class="screen"
+>
+
+  <div class="battleField">
+
+    <!-- 野生側 -->
+
+    <div class="battleEnemy">
+
+      <div
+        id="wildIcon"
+        class="battleMonster"
+      >
+        🐣
+      </div>
+
+      <div class="battleTop">
+
+        <div class="battleNameRow">
+
+          <b id="wildName">
+            野生のパチモン
+          </b>
+
+          <span>
+            Lv.<span id="wildLevel">5</span>
+          </span>
+
+        </div>
+
+        <div class="hpbar">
+
+          <div
+            id="wildHpFill"
+            class="hpfill"
+          ></div>
+
+        </div>
+
+        <div class="small">
+
+          HP
+          <span id="wildHp">20</span>
+          /
+          <span id="wildMaxHp">20</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 自分側 -->
+
+    <div class="battlePlayer">
+
+      <div
+        id="playerIcon"
+        class="battleMonster"
+      >
+        🐣
+      </div>
+
+      <div class="battleBottom">
+
+        <div class="battleNameRow">
+
+          <b id="playerNameBattle">
+            ピヨカラ
+          </b>
+
+          <span>
+            Lv.<span id="playerLevelBattle">5</span>
+          </span>
+
+        </div>
+
+        <div class="hpbar">
+
+          <div
+            id="playerHpFill"
+            class="hpfill"
+          ></div>
+
+        </div>
+
+        <div class="small">
+
+          HP
+          <span id="playerHpBattle">20</span>
+          /
+          <span id="playerMaxHpBattle">20</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      id="battleText"
+      class="battleText"
+    >
+      野生のパチモンが現れた！
+    </div>
+
+  </div>
+
+  <!-- 戦闘コマンド -->
+
+  <div class="battleMenu">
+
+    <div
+      id="battleButtons"
+      class="battleButtons"
+    >
+
+      <button onclick="battleFight()">
+        ⚔️ たたかう
+      </button>
+
+      <button onclick="battleSwitch()">
+        🔄 パチモン
+      </button>
+
+      <button onclick="battleItems()">
+        🎒 どうぐ
+      </button>
+
+      <button onclick="battleRun()">
+        🏃 逃げる
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     ショップ
+========================================================= -->
+
+<div
+  id="shopPanel"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      🏥 パチモンセンター
+    </h2>
+
+    <p>
+      パチモンセンターへようこそ！<br>
+      パチモンの回復と道具の売買ができます。
+    </p>
+
+    <div
+      id="shopItems"
+      class="shopItems"
+    ></div>
+
+    <button onclick="sellItems()">
+      💰 道具を売る
+    </button>
+
+    <button
+      class="closeBtn"
+      onclick="closeOverlays()"
+    >
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
      汎用モーダル
-========================= --><div id="modal" class="overlay">  <div
+========================================================= -->
+
+<div
+  id="modal"
+  class="overlay"
+>
+
+  <div
     id="modalContent"
     class="modalBox"
-  ></div></div></div><script>
+  ></div>
+
+</div>
+
+</div>
+
+<script>
 
 /* =========================================================
    パチモンデータ
@@ -1155,16 +1976,29 @@ const MONSTERS = [
 
 const MOVES = [
 
- {name:"たいあたり",power:8},
- {name:"ひっかく",power:10},
- {name:"ピヨピヨ",power:12},
- {name:"いぬパンチ",power:13},
- {name:"ねこパンチ",power:14},
- {name:"ほえる",power:11},
- {name:"ころもアタック",power:16},
- {name:"決裁",power:18},
- {name:"残業させる",power:19},
- {name:"ほしをなげる",power:24}
+ {
+   name:"たいあたり",
+   power:8,
+   effect:"安定した基本攻撃。"
+ },
+
+ {
+   name:"ひっかく",
+   power:10,
+   effect:"少し強めの物理攻撃。"
+ },
+
+ {
+   name:"ピヨピヨ",
+   power:12,
+   effect:"かわいい声で攻撃する。"
+ },
+
+ {
+   name:"全力アタック",
+   power:16,
+   effect:"大ダメージを狙う強力な攻撃。"
+ }
 
 ];
 
@@ -1217,7 +2051,7 @@ const ITEMS = {
 };
 
 /* =========================================================
-   8マップ
+   マップ
 ========================================================= */
 
 const MAPS = [
@@ -1409,9 +2243,6 @@ const MAPS = [
  width:15,
  height:12,
 
- /*
-   すべて15文字に統一
- */
  tiles:[
   "###############",
   "#TTT.....TTTTT#",
@@ -1434,27 +2265,19 @@ const MAPS = [
 ];
 
 /* =========================================================
-   マップデータ検証
+   マップ検証
 ========================================================= */
 
 function validateMaps(){
 
  MAPS.forEach(map=>{
 
-   if(map.tiles.length!==map.height){
-
-     console.warn(
-       `MAP ${map.id}: height不一致`
-     );
-
-   }
-
    map.tiles.forEach((row,index)=>{
 
      if(row.length!==map.width){
 
        console.warn(
-         `MAP ${map.id}: ${index}行目の幅が不一致`,
+         `MAP ${map.id}: ${index+1}行目の幅が不一致`,
          row.length,
          map.width
        );
@@ -1513,7 +2336,7 @@ let state={
 let currentBox=0;
 
 /* =========================================================
-   基本関数
+   基本
 ========================================================= */
 
 function monsterData(id){
@@ -1533,13 +2356,20 @@ function clamp(v,min,max){
 
 }
 
-function createMonster(id,level=5){
+function createMonster(
+  id,
+  level=5
+){
 
- const d=monsterData(id);
+ const d=
+   monsterData(id);
 
  if(!d){
 
-   console.error("存在しないパチモンID:",id);
+   console.error(
+     "存在しないパチモンID:",
+     id
+   );
 
    return null;
 
@@ -1547,7 +2377,9 @@ function createMonster(id,level=5){
 
  const maxHp=
    d.baseHp+
-   Math.floor((level-1)*2.5);
+   Math.floor(
+     (level-1)*2.5
+   );
 
  return{
 
@@ -1563,7 +2395,9 @@ function createMonster(id,level=5){
 
    atk:
      d.atk+
-     Math.floor((level-1)*1.3)
+     Math.floor(
+       (level-1)*1.3
+     )
 
  };
 
@@ -1571,9 +2405,15 @@ function createMonster(id,level=5){
 
 function getMonsterName(mon){
 
- if(!mon) return "？？？？";
+ if(!mon){
+   return "？？？？";
+ }
 
- return monsterData(mon.id)?.name || "？？？";
+ return (
+   monsterData(mon.id)?.name
+   ||
+   "？？？"
+ );
 
 }
 
@@ -1607,12 +2447,15 @@ function chooseStarter(id){
  addDex(id);
 
  state.map=0;
+
  state.x=5;
  state.y=6;
 
  saveGame(false);
 
- showScreen("mapScreen");
+ showScreen(
+   "mapScreen"
+ );
 
  renderAll();
 
@@ -1651,14 +2494,10 @@ function showScreen(id){
 
 function renderMap(){
 
- const map=MAPS[state.map];
+ const map=
+   MAPS[state.map];
 
  if(!map){
-
-   console.error(
-     "存在しないマップ:",
-     state.map
-   );
 
    state.map=0;
    state.x=5;
@@ -1680,14 +2519,23 @@ function renderMap(){
    `repeat(${map.height},1fr)`;
 
  document.getElementById("mapName")
-   .textContent=map.name;
+   .textContent=
+     map.name;
 
- for(let y=0;y<map.height;y++){
+ for(
+   let y=0;
+   y<map.height;
+   y++
+ ){
 
    const row=
      map.tiles[y] || "";
 
-   for(let x=0;x<map.width;x++){
+   for(
+     let x=0;
+     x<map.width;
+     x++
+   ){
 
      let ch=
        row[x] || ".";
@@ -1700,6 +2548,7 @@ function renderMap(){
      if(ch==="#"){
 
        tile.classList.add("wall");
+
        tile.textContent="🧱";
 
      }
@@ -1707,6 +2556,7 @@ function renderMap(){
      else if(ch==="."){
 
        tile.classList.add("grass");
+
        tile.textContent="🌱";
 
      }
@@ -1714,6 +2564,7 @@ function renderMap(){
      else if(ch==="="){
 
        tile.classList.add("road");
+
        tile.textContent="";
 
      }
@@ -1721,6 +2572,7 @@ function renderMap(){
      else if(ch==="T"){
 
        tile.classList.add("tree");
+
        tile.textContent="🌳";
 
      }
@@ -1728,6 +2580,7 @@ function renderMap(){
      else if(ch==="W"){
 
        tile.classList.add("water");
+
        tile.textContent="🌊";
 
      }
@@ -1735,6 +2588,7 @@ function renderMap(){
      else if(ch==="C"){
 
        tile.classList.add("center");
+
        tile.textContent="🏥";
 
      }
@@ -1742,6 +2596,7 @@ function renderMap(){
      else if(ch==="S"){
 
        tile.classList.add("shop");
+
        tile.textContent="🛒";
 
      }
@@ -1749,6 +2604,7 @@ function renderMap(){
      else if(ch==="E"){
 
        tile.classList.add("exit");
+
        tile.textContent="➡️";
 
      }
@@ -1859,8 +2715,6 @@ function checkTile(){
  const tile=
    map.tiles[state.y][state.x];
 
- /* 出口 */
-
  if(tile==="E"){
 
    const exit=
@@ -1882,8 +2736,6 @@ function checkTile(){
 
  }
 
- /* パチモンセンター */
-
  if(tile==="C"){
 
    healParty();
@@ -1892,17 +2744,16 @@ function checkTile(){
      "パチモンセンターで全員のHPが回復しました！"
    );
 
-   setTimeout(()=>{
-
-     openShop();
-
-   },150);
+   setTimeout(
+     ()=>{
+       openShop();
+     },
+     150
+   );
 
    return;
 
  }
-
- /* 草・道でエンカウント */
 
  if(
    tile==="." ||
@@ -1937,6 +2788,7 @@ function changeMap(
 ){
 
  state.map=mapId;
+
  state.x=x;
  state.y=y;
 
@@ -1949,14 +2801,15 @@ function changeMap(
 }
 
 /* =========================================================
-   全回復
+   回復
 ========================================================= */
 
 function healParty(){
 
  state.party.forEach(mon=>{
 
-   mon.hp=mon.maxHp;
+   mon.hp=
+     mon.maxHp;
 
  });
 
@@ -1969,10 +2822,12 @@ function healParty(){
 function updateHUD(){
 
  document.getElementById("money")
-   .textContent=state.money;
+   .textContent=
+     state.money;
 
  document.getElementById("steps")
-   .textContent=state.steps;
+   .textContent=
+     state.steps;
 
 }
 
@@ -2012,23 +2867,36 @@ function openDex(){
 
    if(!seen){
 
-     div.classList.add("dexUnknown");
+     div.classList.add(
+       "dexUnknown"
+     );
 
      div.innerHTML=`
+
        <b>No.${d.id}</b><br>
        ？？？？？
+
      `;
 
    }else{
 
      div.innerHTML=`
-       <b>No.${d.id} ${d.name}</b>
+
+       <b>
+         No.${d.id} ${d.name}
+       </b>
        ${d.icon}
+
        <br>
+
        <span class="small">
+
        タイプ：${d.type}<br>
+
        ${d.desc}
+
        </span>
+
      `;
 
    }
@@ -2144,21 +3012,33 @@ function showPartyDetail(index){
 
  let html=`
 
-   <h2>${d.icon} ${d.name}</h2>
+   <h2>
+     ${d.icon} ${d.name}
+   </h2>
 
    <p>
+
      Lv.${mon.level}<br>
+
      HP ${mon.hp}/${mon.maxHp}<br>
+
      攻撃 ${mon.atk}<br>
+
      経験値 ${mon.exp}/100
+
    </p>
 
    <p>
+
      タイプ：${d.type}<br>
+
      ${d.desc}
+
    </p>
 
-   <h3>進化</h3>
+   <h3>
+     進化
+   </h3>
 
  `;
 
@@ -2167,9 +3047,11 @@ function showPartyDetail(index){
    html+=`
 
      <p>
+
        Lv.${d.evoLv}で
        ${monsterData(d.evo).name}
        に進化
+
      </p>
 
    `;
@@ -2233,7 +3115,11 @@ function renderBox(){
 
  tabs.innerHTML="";
 
- for(let i=0;i<5;i++){
+ for(
+   let i=0;
+   i<5;
+   i++
+ ){
 
    const btn=
      document.createElement("button");
@@ -2339,13 +3225,18 @@ function boxSlotAction(slot){
  let html=`
 
    <h2>
+
      ${monsterData(mon.id).icon}
      ${monsterData(mon.id).name}
+
    </h2>
 
    <p>
+
      Lv.${mon.level}<br>
+
      HP ${mon.hp}/${mon.maxHp}
+
    </p>
 
    <div class="modalButtons">
@@ -2417,7 +3308,8 @@ function boxToParty(slot){
 
  state.party.push(mon);
 
- state.boxes[currentBox][slot]=null;
+ state.boxes[currentBox][slot]=
+   null;
 
  closeModal();
 
@@ -2456,9 +3348,11 @@ function swapBoxWithParty(slot){
          style="width:100%;text-align:left"
          onclick="doBoxPartySwap(${slot},${index})"
        >
+
          ${d.icon}
          ${d.name}
          Lv.${mon.level}
+
        </button>
 
      `;
@@ -2539,7 +3433,11 @@ function openBoxForParty(
 
  `;
 
- for(let b=0;b<5;b++){
+ for(
+   let b=0;
+   b<5;
+   b++
+ ){
 
    const empty=
      state.boxes[b]
@@ -2561,9 +3459,11 @@ function openBoxForParty(
            )
          "
        >
+
          BOX ${b+1}
          ／
          ${empty+1}番
+
        </button>
 
      `;
@@ -2695,7 +3595,7 @@ function startWildBattle(){
 }
 
 /* =========================================================
-   バトル描画
+   戦闘描画
 ========================================================= */
 
 function renderBattle(){
@@ -2792,7 +3692,7 @@ function renderBattle(){
 }
 
 /* =========================================================
-   戦闘メニュー
+   たたかう
 ========================================================= */
 
 function battleFight(){
@@ -2800,8 +3700,12 @@ function battleFight(){
  let html=`
 
    <h2>
-     技を選択
+     ⚔️ 技を選択
    </h2>
+
+   <p class="small">
+     技をタップすると使用します。
+   </p>
 
  `;
 
@@ -2811,13 +3715,20 @@ function battleFight(){
      html+=`
 
        <button
-         style="width:100%;text-align:left"
+         class="moveButton"
          onclick="useMove(${index})"
        >
-         ⚔️
-         ${move.name}
-         ／
-         威力 ${move.power}
+
+         <div class="moveName">
+           ⚔️ ${move.name}
+         </div>
+
+         <div class="moveInfo">
+           威力：${move.power}
+           ／
+           効果：${move.effect}
+         </div>
+
        </button>
 
      `;
@@ -2908,6 +3819,233 @@ function useMove(
 }
 
 /* =========================================================
+   パチモン入れ替え
+========================================================= */
+
+function battleSwitch(){
+
+ const battle=
+   state.battle;
+
+ if(!battle) return;
+
+ let html=`
+
+   <h2>
+     🔄 パチモンを選択
+   </h2>
+
+   <p class="small">
+     戦闘に出すパチモンを選んでください。
+   </p>
+
+   <div class="switchList">
+
+ `;
+
+ state.party.forEach(
+   (mon,index)=>{
+
+     const d=
+       monsterData(mon.id);
+
+     const current=
+       index===
+       battle.playerIndex;
+
+     const fainted=
+       mon.hp<=0;
+
+     if(current){
+
+       html+=`
+
+         <button
+           class="switchButton"
+           disabled
+           style="
+             opacity:.5;
+             cursor:not-allowed;
+           "
+         >
+
+           <span class="switchIcon">
+             ${d.icon}
+           </span>
+
+           <span>
+
+             <b>${d.name}</b>
+
+             <br>
+
+             Lv.${mon.level}
+             ／
+             HP ${mon.hp}/${mon.maxHp}
+
+             <br>
+
+             <span class="small">
+               現在戦闘中
+             </span>
+
+           </span>
+
+         </button>
+
+       `;
+
+       return;
+
+     }
+
+     if(fainted){
+
+       html+=`
+
+         <button
+           class="switchButton"
+           disabled
+           style="
+             opacity:.45;
+             cursor:not-allowed;
+           "
+         >
+
+           <span class="switchIcon">
+             ${d.icon}
+           </span>
+
+           <span>
+
+             <b>${d.name}</b>
+
+             <br>
+
+             Lv.${mon.level}
+             ／
+             HP 0/${mon.maxHp}
+
+             <br>
+
+             <span class="small">
+               ひんし
+             </span>
+
+           </span>
+
+         </button>
+
+       `;
+
+       return;
+
+     }
+
+     html+=`
+
+       <button
+         class="switchButton"
+         onclick="switchBattleMonster(${index})"
+       >
+
+         <span class="switchIcon">
+           ${d.icon}
+         </span>
+
+         <span>
+
+           <b>${d.name}</b>
+
+           <br>
+
+           Lv.${mon.level}
+           ／
+           HP ${mon.hp}/${mon.maxHp}
+
+         </span>
+
+       </button>
+
+     `;
+
+   }
+ );
+
+ html+=`
+
+   </div>
+
+   <button
+     onclick="closeModal()"
+     style="width:100%;margin-top:8px"
+   >
+     戻る
+   </button>
+
+ `;
+
+ openModal(html);
+
+}
+
+/* =========================================================
+   戦闘中パチモン変更
+========================================================= */
+
+function switchBattleMonster(
+  newIndex
+){
+
+ const battle=
+   state.battle;
+
+ if(!battle) return;
+
+ if(
+   newIndex===
+   battle.playerIndex
+ ){
+
+   return;
+
+ }
+
+ const mon=
+   state.party[newIndex];
+
+ if(
+   !mon ||
+   mon.hp<=0
+ ){
+
+   return;
+
+ }
+
+ battle.playerIndex=
+   newIndex;
+
+ closeModal();
+
+ renderBattle();
+
+ setBattleText(
+   `${getMonsterName(mon)}に入れ替えた！`
+ );
+
+ /* 入れ替え後は敵の攻撃 */
+
+ setTimeout(
+   ()=>{
+     enemyAttack();
+   },
+   700
+ );
+
+}
+
+/* =========================================================
    敵攻撃
 ========================================================= */
 
@@ -2985,9 +4123,11 @@ function winBattle(){
    35+
    enemy.level*8;
 
- state.money+=money;
+ state.money+=
+   money;
 
- player.exp+=exp;
+ player.exp+=
+   exp;
 
  const reward=
    getBattleDrop(enemy);
@@ -3037,7 +4177,7 @@ function winBattle(){
 }
 
 /* =========================================================
-   ドロップアイテム
+   ドロップ
 ========================================================= */
 
 function getBattleDrop(
@@ -3190,7 +4330,9 @@ function showEvolutionMessage(
      ${oldName}
 
      <br>
+
      ↓
+
      <br>
 
      <b>${newName}</b>
@@ -3214,12 +4356,13 @@ function showEvolutionMessage(
 
 function playerDefeated(){
 
+ const defeated=
+   state.party[
+     state.battle.playerIndex
+   ];
+
  setBattleText(
-   `${getMonsterName(
-     state.party[
-       state.battle.playerIndex
-     ]
-   )}は倒れた！`
+   `${getMonsterName(defeated)}は倒れた！`
  );
 
  setTimeout(
@@ -3233,10 +4376,11 @@ function playerDefeated(){
        state.battle.playerIndex=
          next;
 
+       const nextMon=
+         state.party[next];
+
        setBattleText(
-         `${getMonsterName(
-           state.party[next]
-         )}を出した！`
+         `${getMonsterName(nextMon)}を出した！`
        );
 
        renderBattle();
@@ -3345,8 +4489,10 @@ function battleItems(){
            style="width:100%"
            onclick="useCapsule('${key}')"
          >
+
            ${ITEMS[key].name}
            ×${state.items[key]}
+
          </button>
 
        `;
@@ -3596,7 +4742,7 @@ function battleRun(){
 }
 
 /* =========================================================
-   バトルテキスト
+   戦闘テキスト
 ========================================================= */
 
 function setBattleText(text){
@@ -3748,10 +4894,12 @@ function sellItems(){
              style="width:100%"
              onclick="sellItem('${key}')"
            >
+
              ${item.name}
              ×${count}
              ／
              ${item.sell}円
+
            </button>
 
          `;
@@ -3823,7 +4971,8 @@ function openModal(html){
 
  document
    .getElementById("modalContent")
-   .innerHTML=html;
+   .innerHTML=
+     html;
 
  document
    .getElementById("modal")
@@ -3909,10 +5058,6 @@ function loadGame(){
      JSON.parse(saved);
 
    state=data;
-
-   /*
-     古いセーブデータ対策
-   */
 
    if(
      !Array.isArray(state.boxes)
@@ -4018,6 +5163,7 @@ function loadGame(){
    ){
 
      state.map=0;
+
      state.x=5;
      state.y=6;
 
@@ -4094,5 +5240,7 @@ if(
 
 }
 
-</script></body>
+</script>
+
+</body>
 </html>
