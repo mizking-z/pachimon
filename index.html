@@ -4711,6 +4711,7 @@ function closeOverlays(){
 
 /* =========================================================
    BGM
+   マップBGMと戦闘BGMを完全に分離
 ========================================================= */
 
 let audioCtx=null;
@@ -4718,6 +4719,18 @@ let bgmGain=null;
 let bgmTimer=null;
 let bgmMode=null;
 let bgmToken=0;
+
+/*
+  現在予約・再生中の音源を全部保存する。
+  これをstopBGM()で確実に停止することで、
+  マップBGMと戦闘BGMが重ならないようにする。
+*/
+let bgmSources=[];
+
+
+/* =========================================================
+   MIDI → 周波数
+========================================================= */
 
 function midiToFreq(midi){
 
@@ -4729,6 +4742,11 @@ function midiToFreq(midi){
 
 }
 
+
+/* =========================================================
+   AudioContext準備
+========================================================= */
+
 function ensureAudio(){
 
  if(!audioCtx){
@@ -4738,6 +4756,10 @@ function ensureAudio(){
      window.webkitAudioContext;
 
    if(!AudioContext){
+
+     console.warn(
+       "このブラウザはWeb Audio APIに対応していません。"
+     );
 
      return false;
 
@@ -4762,13 +4784,25 @@ function ensureAudio(){
    audioCtx.state==="suspended"
  ){
 
-   audioCtx.resume();
+   audioCtx.resume().catch(
+     e=>{
+       console.warn(
+         "AudioContextの再開に失敗しました。",
+         e
+       );
+     }
+   );
 
  }
 
  return true;
 
 }
+
+
+/* =========================================================
+   BGM音符再生
+========================================================= */
 
 function playBGMNote(
   midi,
@@ -4778,7 +4812,10 @@ function playBGMNote(
   type
 ){
 
- if(!audioCtx || !bgmGain){
+ if(
+   !audioCtx ||
+   !bgmGain
+ ){
 
    return;
 
@@ -4819,6 +4856,35 @@ function playBGMNote(
 
  gain.connect(bgmGain);
 
+
+ /*
+   現在の音源を管理リストへ追加
+ */
+ bgmSources.push(
+   osc
+ );
+
+
+ /*
+   音が終了したらリストから削除
+ */
+ osc.onended=()=>{
+
+   const index=
+     bgmSources.indexOf(osc);
+
+   if(index>=0){
+
+     bgmSources.splice(
+       index,
+       1
+     );
+
+   }
+
+ };
+
+
  osc.start(start);
 
  osc.stop(
@@ -4827,22 +4893,10 @@ function playBGMNote(
 
 }
 
-function stopBGM(){
 
- bgmToken++;
-
- if(bgmTimer){
-
-   clearTimeout(
-     bgmTimer
-   );
-
- }
-
- bgmTimer=null;
- bgmMode=null;
-
-}
+/* =========================================================
+   マップBGM
+========================================================= */
 
 const MAP_BGM={
 
@@ -4864,6 +4918,11 @@ const MAP_BGM={
 
 };
 
+
+/* =========================================================
+   戦闘BGM
+========================================================= */
+
 const BATTLE_BGM={
 
  bpm:150,
@@ -4884,11 +4943,90 @@ const BATTLE_BGM={
 
 };
 
+
+/* =========================================================
+   BGM停止
+========================================================= */
+
+function stopBGM(){
+
+ /*
+   ① 予約している次のループを停止
+ */
+ bgmToken++;
+
+ if(bgmTimer){
+
+   clearTimeout(
+     bgmTimer
+   );
+
+ }
+
+ bgmTimer=null;
+
+ /*
+   ② 現在のBGMモードを解除
+ */
+ bgmMode=null;
+
+
+ /*
+   ③ すでにAudioContextへ予約済みの
+      Oscillatorを全部停止
+ */
+ if(audioCtx){
+
+   const now=
+     audioCtx.currentTime;
+
+   bgmSources.forEach(
+     osc=>{
+
+       try{
+
+         /*
+           まだ再生中・予約中なら
+           すぐ後に停止する
+         */
+         osc.stop(
+           now+0.01
+         );
+
+       }catch(e){
+
+         /*
+           すでに停止済みの場合は無視
+         */
+
+       }
+
+     }
+   );
+
+ }
+
+ /*
+   リストも空にする
+ */
+ bgmSources=[];
+
+}
+
+
+/* =========================================================
+   BGMループ予約
+========================================================= */
+
 function scheduleBGMLoop(
   mode,
   token
 ){
 
+ /*
+   古いBGMから呼ばれた処理なら
+   即座に終了
+ */
  if(
    token!==bgmToken ||
    bgmMode!==mode
@@ -4904,6 +5042,10 @@ function scheduleBGMLoop(
 
  }
 
+ /*
+   現在のモードに応じて
+   再生する曲を完全に分離
+ */
  const track=
    mode==="battle"
      ? BATTLE_BGM
@@ -4916,6 +5058,10 @@ function scheduleBGMLoop(
    audioCtx.currentTime+
    0.05;
 
+
+ /*
+   メロディ
+ */
  track.melody.forEach(
    (note,index)=>{
 
@@ -4930,6 +5076,10 @@ function scheduleBGMLoop(
    }
  );
 
+
+ /*
+   ベース
+ */
  track.bass.forEach(
    (note,index)=>{
 
@@ -4944,24 +5094,69 @@ function scheduleBGMLoop(
    }
  );
 
+
+ /*
+   1ループ分の長さ
+ */
  const loopLength=
    track.melody.length*beat;
 
+
+ /*
+   次のループを予約
+ */
  bgmTimer=
    setTimeout(
      ()=>{
+
+       /*
+         古いBGMになっていたら
+         次のループを作らない
+       */
+       if(
+         token!==bgmToken ||
+         bgmMode!==mode
+       ){
+
+         return;
+
+       }
+
        scheduleBGMLoop(
          mode,
          token
        );
+
      },
      (loopLength-0.08)*1000
    );
 
 }
 
+
+/* =========================================================
+   BGM開始
+========================================================= */
+
 function startBGM(mode){
 
+ /*
+   不正なモードはマップ扱いにする
+ */
+ if(
+   mode!=="map" &&
+   mode!=="battle"
+ ){
+
+   mode="map";
+
+ }
+
+
+ /*
+   すでに同じBGMが正常に再生されている場合は
+   再スタートしない
+ */
  if(
    bgmMode===mode &&
    bgmTimer
@@ -4971,24 +5166,72 @@ function startBGM(mode){
 
  }
 
+
+ /*
+   AudioContextを準備
+ */
  if(!ensureAudio()){
 
    return;
 
  }
 
+
+ /*
+   ここが重要。
+
+   新しいBGMを開始する前に
+   必ず古いBGMを完全停止する。
+ */
  stopBGM();
 
+
+ /*
+   新しいBGMのモードを設定
+ */
  bgmMode=
    mode;
 
+
+ /*
+   新しいBGM専用のトークンを発行
+ */
  const token=
    ++bgmToken;
 
+
+ /*
+   新しいBGMを開始
+ */
  scheduleBGMLoop(
    mode,
    token
  );
+
+}
+
+
+/* =========================================================
+   現在の画面に合わせてBGMを設定
+========================================================= */
+
+function startBGMForCurrentScreen(){
+
+ /*
+   戦闘中なら戦闘BGM
+ */
+ if(state.battle){
+
+   startBGM("battle");
+
+ /*
+   戦闘中でなければマップBGM
+ */
+ }else{
+
+   startBGM("map");
+
+ }
 
 }
 
