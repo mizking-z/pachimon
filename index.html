@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <title>パチッとモンスター</title>
 
 <style>
@@ -13,320 +14,622 @@
 
 body{
   margin:0;
-  background:#d8e8d0;
+  background:#111;
+  color:#fff;
   font-family:
-    "Hiragino Kaku Gothic ProN",
-    "Yu Gothic",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
-  color:#222;
-}
-
-button{
-  font-family:inherit;
-  cursor:pointer;
-}
-
-#game{
-  width:100%;
-  max-width:720px;
-  margin:auto;
-  min-height:100vh;
-  background:#f7f4e9;
   overflow:hidden;
 }
 
-header{
-  background:#222;
-  color:white;
-  padding:12px;
+button{
+  font:inherit;
+  touch-action:manipulation;
+}
+
+#game{
+  width:100vw;
+  height:100vh;
+  max-width:900px;
+  margin:auto;
+  position:relative;
+  background:#79b95b;
+  overflow:hidden;
+}
+
+.screen{
+  position:absolute;
+  inset:0;
+  display:none;
+}
+
+.screen.active{
+  display:block;
+}
+
+/* =========================
+   タイトル
+========================= */
+
+#titleScreen{
+  background:
+    radial-gradient(circle at 50% 30%,#fff 0,#ffe36e 8%,transparent 9%),
+    linear-gradient(#62b7e8,#9ee0ff 50%,#70c65a 50%);
   text-align:center;
-  font-weight:bold;
+  padding:40px 20px;
+}
+
+.title{
+  margin-top:10vh;
+  font-size:clamp(42px,11vw,85px);
+  font-weight:900;
+  color:#fff;
+  text-shadow:
+    4px 4px 0 #333,
+    -2px -2px 0 #333,
+    2px -2px 0 #333,
+    -2px 2px 0 #333;
+  transform:rotate(-2deg);
+}
+
+.subtitle{
+  margin-top:10px;
   font-size:20px;
-  letter-spacing:2px;
-}
-
-#screen{
-  padding:12px;
-}
-
-.panel{
-  background:white;
-  border:3px solid #333;
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:12px;
-}
-
-h2,h3{
-  margin-top:0;
-}
-
-.center{
-  text-align:center;
-}
-
-.big{
-  font-size:64px;
-}
-
-.small{
-  font-size:12px;
-  color:#666;
-}
-
-button.main{
-  width:100%;
-  padding:15px 10px;
-  margin:5px 0;
-  border:3px solid #333;
-  border-radius:10px;
-  background:#fff;
-  font-size:17px;
   font-weight:bold;
+  color:#222;
 }
 
-button.main:active{
-  transform:scale(.97);
+.startBox{
+  margin:50px auto 0;
+  max-width:500px;
+  background:#fff;
+  color:#222;
+  border:5px solid #222;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 8px 0 #333;
 }
 
-button.danger{
-  background:#ffd5d5;
+.startBox h2{
+  margin:0 0 15px;
 }
 
-button.green{
-  background:#d9ffd9;
-}
-
-button.blue{
-  background:#dceaff;
-}
-
-button.yellow{
-  background:#fff2b8;
-}
-
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-.grid3{
+.starterButtons{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:8px;
 }
 
-.monster-card{
-  border:2px solid #444;
-  border-radius:10px;
-  padding:10px;
-  background:#fafafa;
-  text-align:center;
-  min-height:130px;
+.starterBtn{
+  border:3px solid #222;
+  background:#f7f7f7;
+  border-radius:12px;
+  padding:12px 4px;
+  font-size:16px;
+  cursor:pointer;
 }
 
-.monster-icon{
-  font-size:44px;
+.starterBtn .icon{
+  display:block;
+  font-size:42px;
+}
+
+.starterBtn:active{
+  transform:translateY(3px);
+}
+
+/* =========================
+   共通HUD
+========================= */
+
+#mapScreen{
+  background:#72bb5c;
+}
+
+#hud{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:20;
+  background:rgba(20,20,20,.88);
+  padding:7px 9px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+}
+
+.hudLeft{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.hudMoney{
+  color:#ffe66d;
+  font-weight:bold;
+}
+
+#mapName{
+  font-weight:bold;
+}
+
+/* =========================
+   マップ
+========================= */
+
+#mapArea{
+  position:absolute;
+  top:42px;
+  left:0;
+  right:0;
+  bottom:150px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.mapGrid{
+  display:grid;
+  gap:1px;
+  background:#333;
+  border:4px solid #333;
+  max-width:96vw;
+  max-height:calc(100vh - 220px);
+  aspect-ratio:1;
+}
+
+.tile{
+  width:min(8vw,48px);
+  height:min(8vw,48px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:min(6vw,32px);
+  user-select:none;
+}
+
+.tile.grass{
+  background:#78bd55;
+}
+
+.tile.road{
+  background:#d7bd82;
+}
+
+.tile.water{
+  background:#54aee0;
+}
+
+.tile.tree{
+  background:#4b9b4a;
+}
+
+.tile.wall{
+  background:#777;
+}
+
+.tile.building{
+  background:#d98b57;
+}
+
+.tile.center{
+  background:#f1e9df;
+}
+
+.tile.shop{
+  background:#e8c34d;
+}
+
+.tile.exit{
+  background:#d7bd82;
+}
+
+.tile.player{
+  background:#d7bd82;
+}
+
+.playerIcon{
+  font-size:min(6vw,30px);
+  z-index:2;
+}
+
+#message{
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:155px;
+  min-height:38px;
+  background:rgba(0,0,0,.78);
+  border:2px solid #fff;
+  border-radius:8px;
+  padding:8px 10px;
+  z-index:10;
+  font-size:14px;
+  pointer-events:none;
+}
+
+/* =========================
+   操作パネル
+========================= */
+
+#controls{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:150px;
+  background:#222;
+  border-top:4px solid #111;
+  z-index:30;
+}
+
+.dpad{
+  position:absolute;
+  left:15px;
+  bottom:14px;
+  width:135px;
+  height:120px;
+}
+
+.dpad button{
+  position:absolute;
+  width:45px;
+  height:40px;
+  border:2px solid #111;
+  border-radius:7px;
+  background:#ddd;
+  color:#111;
+  font-size:22px;
+  font-weight:bold;
+}
+
+#up{left:45px;top:0}
+#left{left:0;top:40px}
+#right{right:0;top:40px}
+#down{left:45px;bottom:0}
+
+.menuButtons{
+  position:absolute;
+  right:8px;
+  bottom:8px;
+  width:calc(100% - 165px);
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:5px;
+}
+
+.menuButtons button{
+  padding:8px 4px;
+  border:2px solid #111;
+  border-radius:7px;
+  background:#eee;
+  color:#111;
+  font-weight:bold;
+}
+
+/* =========================
+   メニュー
+========================= */
+
+.overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.overlay.active{
+  display:flex;
+}
+
+.panel{
+  width:min(700px,96vw);
+  max-height:92vh;
+  overflow:auto;
+  background:#f5f5f5;
+  color:#222;
+  border:4px solid #222;
+  border-radius:14px;
+  padding:15px;
+}
+
+.panel h2{
+  margin:0 0 12px;
+}
+
+.panel button{
+  border:2px solid #222;
+  border-radius:8px;
+  background:#fff;
+  padding:9px;
+  margin:3px;
+  cursor:pointer;
+}
+
+.closeBtn{
+  width:100%;
+  background:#333 !important;
+  color:#fff !important;
+  margin-top:10px !important;
+}
+
+/* =========================
+   パーティー
+========================= */
+
+.monsterList{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+}
+
+.monsterCard{
+  border:3px solid #333;
+  border-radius:10px;
+  padding:8px;
+  background:#fff;
+}
+
+.monsterCard.dead{
+  opacity:.5;
+}
+
+.monsterIcon{
+  font-size:35px;
+  float:left;
+  margin-right:8px;
 }
 
 .hpbar{
-  height:12px;
-  border:2px solid #333;
-  border-radius:8px;
+  height:10px;
+  background:#ccc;
+  border:1px solid #333;
+  border-radius:5px;
   overflow:hidden;
-  background:#ddd;
+  margin-top:4px;
 }
 
 .hpfill{
   height:100%;
-  background:#55b85a;
-  transition:.3s;
+  background:#48a848;
 }
 
-.xpbar{
-  height:7px;
-  border:1px solid #333;
-  border-radius:5px;
-  overflow:hidden;
-  background:#ddd;
+.small{
+  font-size:12px;
 }
 
-.xpfill{
-  height:100%;
-  background:#477bd1;
-}
+/* =========================
+   図鑑
+========================= */
 
-.map{
+.dexGrid{
   display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:3px;
-  background:#79a66a;
-  padding:5px;
-  border:3px solid #333;
-  border-radius:10px;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
 }
 
-.map-cell{
-  aspect-ratio:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#a9cf91;
-  border:1px solid #71965e;
-  font-size:25px;
-  user-select:none;
-}
-
-.map-cell.road{
-  background:#d8c38b;
-}
-
-.map-cell.city{
-  background:#ddd;
-}
-
-.map-cell.water{
-  background:#8bc5df;
-}
-
-.map-cell.player{
-  background:#fff0a0;
-}
-
-.battle{
-  position:relative;
-  min-height:380px;
-  background:
-    linear-gradient(#bfe5ff 0 58%,#a9d28f 58%);
-  border:3px solid #333;
-  border-radius:12px;
-  overflow:hidden;
-}
-
-.battle-mon{
-  position:absolute;
-  text-align:center;
-}
-
-.enemy{
-  top:25px;
-  right:25px;
-}
-
-.player-mon{
-  bottom:20px;
-  left:25px;
-}
-
-.battle-icon{
-  font-size:80px;
-}
-
-.battle-name{
-  font-weight:bold;
-  font-size:17px;
-}
-
-.battle-status{
-  background:white;
-  border:3px solid #333;
+.dexItem{
+  border:2px solid #555;
   border-radius:8px;
-  padding:8px;
-  min-width:180px;
-}
-
-.battle-menu{
-  margin-top:10px;
-}
-
-.log{
-  background:#222;
-  color:#fff;
-  padding:10px;
-  border-radius:8px;
-  min-height:65px;
-  font-size:14px;
-}
-
-.choice{
-  font-size:20px;
-  padding:15px 5px;
-}
-
-.tabs{
-  display:flex;
-  gap:5px;
-  overflow-x:auto;
-  margin-bottom:10px;
-}
-
-.tab{
-  flex:1;
-  min-width:100px;
-  padding:10px;
-  border:2px solid #333;
-  border-radius:8px;
-  background:white;
-  font-weight:bold;
-}
-
-.selected{
-  background:#ffe990!important;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:100;
-}
-
-.modal-box{
-  width:100%;
-  max-width:500px;
-  max-height:90vh;
-  overflow:auto;
+  padding:7px;
   background:#fff;
-  border:4px solid #222;
-  border-radius:15px;
-  padding:15px;
+  min-height:65px;
 }
 
-.hidden{
-  display:none!important;
+.dexUnknown{
+  color:#888;
 }
 
-.menu-grid{
+/* =========================
+   BOX
+========================= */
+
+.boxTabs{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(5,1fr);
+  gap:3px;
+  margin-bottom:8px;
+}
+
+.boxTabs button{
+  margin:0;
+  padding:6px 2px;
+}
+
+.boxGrid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:5px;
+}
+
+.boxSlot{
+  min-height:70px;
+  border:2px solid #777;
+  border-radius:7px;
+  background:#ddd;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+}
+
+.boxSlot.occupied{
+  background:#fff;
+  border-color:#222;
+}
+
+.boxSlot .slotIcon{
+  font-size:25px;
+}
+
+/* =========================
+   戦闘
+========================= */
+
+#battleScreen{
+  background:
+    linear-gradient(#a7d8f2 0 45%,#82c56b 45% 100%);
+}
+
+.battleTop{
+  position:absolute;
+  top:15px;
+  right:12px;
+  width:48%;
+  background:#fff;
+  color:#222;
+  border:3px solid #222;
+  border-radius:10px;
+  padding:8px;
+}
+
+.battleBottom{
+  position:absolute;
+  left:12px;
+  bottom:175px;
+  width:48%;
+  background:#fff;
+  color:#222;
+  border:3px solid #222;
+  border-radius:10px;
+  padding:8px;
+}
+
+.battleMonster{
+  text-align:center;
+  font-size:80px;
+  position:absolute;
+}
+
+#wildIcon{
+  right:18%;
+  top:24%;
+}
+
+#playerIcon{
+  left:18%;
+  bottom:35%;
+}
+
+.battleMenu{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:165px;
+  background:#222;
+  border-top:4px solid #111;
+  padding:8px;
+  z-index:20;
+}
+
+.battleButtons{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
+}
+
+.battleButtons button{
+  padding:10px;
+  border:2px solid #111;
+  border-radius:7px;
+  font-weight:bold;
+}
+
+.battleText{
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:168px;
+  background:rgba(0,0,0,.8);
+  border:2px solid #fff;
+  border-radius:8px;
+  padding:9px;
+  z-index:25;
+  min-height:42px;
+}
+
+/* =========================
+   ショップ
+========================= */
+
+.shopItems{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
   gap:8px;
 }
 
-.menu-grid button{
-  min-height:70px;
+.shopItem{
+  border:3px solid #333;
+  border-radius:10px;
+  padding:10px;
+  background:#fff;
 }
 
-.money{
-  text-align:right;
+.shopItem h3{
+  margin:0 0 4px;
+}
+
+.price{
+  color:#c88a00;
   font-weight:bold;
 }
 
-@media(max-width:420px){
-  #screen{
-    padding:8px;
+/* =========================
+   モーダル
+========================= */
+
+.modalBox{
+  width:min(600px,94vw);
+  background:#fff;
+  color:#222;
+  border:4px solid #222;
+  border-radius:12px;
+  padding:15px;
+}
+
+.modalButtons{
+  display:grid;
+  gap:5px;
+  margin-top:10px;
+}
+
+/* =========================
+   レスポンシブ
+========================= */
+
+@media(max-width:500px){
+  .title{
+    font-size:48px;
   }
 
-  .battle-icon{
+  .starterBtn .icon{
+    font-size:32px;
+  }
+
+  .monsterList{
+    grid-template-columns:1fr;
+  }
+
+  .battleMonster{
     font-size:65px;
   }
 
-  .big{
-    font-size:52px;
+  .tile{
+    width:9vw;
+    height:9vw;
+    font-size:7vw;
   }
 }
 </style>
@@ -336,93 +639,381 @@ button.yellow{
 
 <div id="game">
 
-<header>
-  🥚 パチッとモンスター
-</header>
+<!-- =========================
+     タイトル
+========================= -->
 
-<div id="screen"></div>
+<div id="titleScreen" class="screen active">
+
+  <div class="title">パチモン</div>
+
+  <div class="subtitle">
+    パチッとモンスター
+  </div>
+
+  <div class="startBox">
+
+    <h2>最初のパチモンを選ぼう！</h2>
+
+    <div class="starterButtons">
+
+      <button class="starterBtn" onclick="chooseStarter(1)">
+        <span class="icon">🐣</span>
+        ピヨカラ
+      </button>
+
+      <button class="starterBtn" onclick="chooseStarter(4)">
+        <span class="icon">🐶</span>
+        イヌヌワン
+      </button>
+
+      <button class="starterBtn" onclick="chooseStarter(7)">
+        <span class="icon">🐱</span>
+        ネココネコ
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
-<div id="modal" class="modal hidden">
-  <div id="modalBox" class="modal-box"></div>
+<!-- =========================
+     マップ
+========================= -->
+
+<div id="mapScreen" class="screen">
+
+  <div id="hud">
+    <div class="hudLeft">
+      <span id="mapName">パチタウン</span>
+      <span>👣<span id="steps">0</span></span>
+    </div>
+
+    <div>
+      💰 <span id="money" class="hudMoney">1000</span>円
+    </div>
+  </div>
+
+  <div id="mapArea">
+    <div id="mapGrid" class="mapGrid"></div>
+  </div>
+
+  <div id="message">
+    パチモンの世界へようこそ！
+  </div>
+
+  <div id="controls">
+
+    <div class="dpad">
+
+      <button id="up" onclick="move(0,-1)">▲</button>
+      <button id="left" onclick="move(-1,0)">◀</button>
+      <button id="right" onclick="move(1,0)">▶</button>
+      <button id="down" onclick="move(0,1)">▼</button>
+
+    </div>
+
+    <div class="menuButtons">
+
+      <button onclick="openDex()">📖 図鑑</button>
+      <button onclick="openParty()">👥 手持ち</button>
+      <button onclick="openBox()">📦 BOX</button>
+      <button onclick="openMainMenu()">☰ メニュー</button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     メインメニュー
+========================= -->
+
+<div id="mainMenu" class="overlay">
+
+  <div class="panel">
+
+    <h2>メニュー</h2>
+
+    <button onclick="openDex()">📖 パチモン図鑑</button>
+    <button onclick="openParty()">👥 手持ち</button>
+    <button onclick="openBox()">📦 パチモンBOX</button>
+
+    <button onclick="saveGame()">💾 セーブ</button>
+
+    <button onclick="resetGame()">
+      🔄 リセット
+    </button>
+
+    <button class="closeBtn" onclick="closeOverlays()">
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     図鑑
+========================= -->
+
+<div id="dexPanel" class="overlay">
+
+  <div class="panel">
+
+    <h2>📖 パチモン図鑑</h2>
+
+    <div id="dexGrid" class="dexGrid"></div>
+
+    <button class="closeBtn" onclick="closeOverlays()">
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     手持ち
+========================= -->
+
+<div id="partyPanel" class="overlay">
+
+  <div class="panel">
+
+    <h2>👥 手持ちパチモン</h2>
+
+    <div id="partyList" class="monsterList"></div>
+
+    <button class="closeBtn" onclick="closeOverlays()">
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     BOX
+========================= -->
+
+<div id="boxPanel" class="overlay">
+
+  <div class="panel">
+
+    <h2>📦 パチモンBOX</h2>
+
+    <div id="boxTabs" class="boxTabs"></div>
+
+    <div id="boxGrid" class="boxGrid"></div>
+
+    <button class="closeBtn" onclick="closeOverlays()">
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     戦闘
+========================= -->
+
+<div id="battleScreen" class="screen">
+
+  <div class="battleTop">
+
+    <b id="wildName">野生のパチモン</b>
+
+    <div>
+      Lv.<span id="wildLevel">5</span>
+    </div>
+
+    <div class="hpbar">
+      <div id="wildHpFill" class="hpfill"></div>
+    </div>
+
+    <div class="small">
+      HP <span id="wildHp">20</span>/<span id="wildMaxHp">20</span>
+    </div>
+
+  </div>
+
+  <div id="wildIcon" class="battleMonster">
+    🐣
+  </div>
+
+  <div id="playerIcon" class="battleMonster">
+    🐣
+  </div>
+
+  <div class="battleBottom">
+
+    <b id="playerNameBattle">ピヨカラ</b>
+
+    <div>
+      Lv.<span id="playerLevelBattle">5</span>
+    </div>
+
+    <div class="hpbar">
+      <div id="playerHpFill" class="hpfill"></div>
+    </div>
+
+    <div class="small">
+      HP <span id="playerHpBattle">20</span>/<span id="playerMaxHpBattle">20</span>
+    </div>
+
+  </div>
+
+  <div id="battleText" class="battleText">
+    野生のパチモンが現れた！
+  </div>
+
+  <div class="battleMenu">
+
+    <div id="battleButtons" class="battleButtons">
+
+      <button onclick="battleFight()">
+        ⚔️ たたかう
+      </button>
+
+      <button onclick="battleItems()">
+        🎒 どうぐ
+      </button>
+
+      <button onclick="battleRun()">
+        🏃 逃げる
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     ショップ
+========================= -->
+
+<div id="shopPanel" class="overlay">
+
+  <div class="panel">
+
+    <h2>🏥 パチモンセンター</h2>
+
+    <p>
+      パチモンセンターへようこそ！<br>
+      パチモンの回復と道具の売買ができます。
+    </p>
+
+    <div id="shopItems" class="shopItems"></div>
+
+    <button onclick="sellItems()">
+      💰 道具を売る
+    </button>
+
+    <button class="closeBtn" onclick="closeOverlays()">
+      閉じる
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     汎用モーダル
+========================= -->
+
+<div id="modal" class="overlay">
+
+  <div id="modalContent" class="modalBox"></div>
+
+</div>
+
 </div>
 
 <script>
-"use strict";
 
 /* =========================================================
    パチモンデータ
 ========================================================= */
 
 const MONSTERS = [
- {id:1,name:"ピヨカラ",icon:"🐣",type:"ノーマル",evo:2,evoLv:10,desc:"いつもピヨピヨ鳴いている。何を考えているのかは誰にも分からない。",baseHp:40,atk:10},
- {id:2,name:"ピヨコ",icon:"🐤",type:"ノーマル",evo:3,evoLv:20,desc:"ピヨカラより少しだけ強くなった。本人はかなり強くなったと思っている。",baseHp:55,atk:15},
- {id:3,name:"ピヨトリ",icon:"🐔",type:"ノーマル",evo:null,evoLv:null,desc:"立派な鳥になった。朝になると勝手に鳴く。",baseHp:75,atk:22},
 
- {id:4,name:"イヌヌワン",icon:"🐶",type:"ノーマル",evo:5,evoLv:10,desc:"犬なのか何なのかよく分からない。とりあえず元気。",baseHp:45,atk:11},
- {id:5,name:"イヌキチ",icon:"🐕",type:"ノーマル",evo:6,evoLv:20,desc:"散歩が大好き。飼い主より先に家に帰ることがある。",baseHp:60,atk:17},
- {id:6,name:"イヌスミス",icon:"🐩",type:"ノーマル",evo:null,evoLv:null,desc:"なぜか髪型がすごい。本人は気に入っている。",baseHp:78,atk:23},
+ {id:1,name:"ピヨカラ",icon:"🐣",type:"とり",evo:2,evoLv:16,desc:"黄色いヒヨコ。とにかく元気。",baseHp:32,atk:8},
+ {id:2,name:"ピヨコ",icon:"🐤",type:"とり",evo:3,evoLv:36,desc:"少し大きくなったヒヨコ。",baseHp:45,atk:12},
+ {id:3,name:"ピヨトリ",icon:"🐔",type:"とり",evo:null,evoLv:null,desc:"立派な鳥になった。朝がうるさい。",baseHp:65,atk:18},
 
- {id:7,name:"ネココネコ",icon:"🐱",type:"ノーマル",evo:8,evoLv:10,desc:"何を考えているか分からない。たぶん何も考えていない。",baseHp:38,atk:13},
- {id:8,name:"ネコスケ",icon:"🐈",type:"ノーマル",evo:9,evoLv:20,desc:"少し賢くなった気がする。気がするだけかもしれない。",baseHp:53,atk:19},
- {id:9,name:"ネコノミクス",icon:"🐈‍⬛",type:"ノーマル",evo:null,evoLv:null,desc:"経済について詳しい猫。物価高には厳しい。",baseHp:72,atk:25},
+ {id:4,name:"イヌヌワン",icon:"🐶",type:"いぬ",evo:5,evoLv:16,desc:"人懐っこい犬。",baseHp:35,atk:9},
+ {id:5,name:"イヌキチ",icon:"🐕",type:"いぬ",evo:6,evoLv:36,desc:"ちょっと賢くなった犬。",baseHp:48,atk:13},
+ {id:6,name:"イヌスミス",icon:"🐩",type:"いぬ",evo:null,evoLv:null,desc:"なぜかスーツを着ている犬。",baseHp:68,atk:20},
 
- {id:10,name:"チュウタ",icon:"🐭",type:"ノーマル",evo:11,evoLv:10,desc:"小さくてすばしっこい。",baseHp:35,atk:12},
- {id:11,name:"チュウチュウ",icon:"🐹",type:"ノーマル",evo:12,evoLv:20,desc:"回し車を永遠に回している。",baseHp:52,atk:18},
- {id:12,name:"ネズキング",icon:"🐀",type:"ノーマル",evo:null,evoLv:null,desc:"ネズミ界の王。王冠は段ボール製。",baseHp:70,atk:24},
+ {id:7,name:"ネココネコ",icon:"🐱",type:"ねこ",evo:8,evoLv:16,desc:"寝るのが仕事。",baseHp:31,atk:10},
+ {id:8,name:"ネコスケ",icon:"🐈",type:"ねこ",evo:9,evoLv:36,desc:"かなり自由な猫。",baseHp:44,atk:14},
+ {id:9,name:"ネコノミクス",icon:"🐈‍⬛",type:"ねこ",evo:null,evoLv:null,desc:"経済について語り始める猫。",baseHp:63,atk:21},
 
- {id:13,name:"ケロリン",icon:"🐸",type:"みず",evo:14,evoLv:10,desc:"水たまりを見ると飛び込みたくなる。",baseHp:42,atk:10},
- {id:14,name:"ケロケロ",icon:"🐸",type:"みず",evo:15,evoLv:20,desc:"鳴き声が大きい。",baseHp:58,atk:16},
- {id:15,name:"ケロッパ",icon:"🐊",type:"みず",evo:null,evoLv:null,desc:"カエルだったはずなのにワニっぽくなった。",baseHp:82,atk:23},
+ {id:10,name:"チュウタ",icon:"🐭",type:"ねずみ",evo:11,evoLv:16,desc:"小さなネズミ。",baseHp:29,atk:8},
+ {id:11,name:"チュウチュウ",icon:"🐭",type:"ねずみ",evo:12,evoLv:36,desc:"素早いネズミ。",baseHp:41,atk:13},
+ {id:12,name:"ネズキング",icon:"🐀",type:"ねずみ",evo:null,evoLv:null,desc:"ネズミ界の王。",baseHp:62,atk:21},
 
- {id:16,name:"ウサピョン",icon:"🐰",type:"ノーマル",evo:17,evoLv:10,desc:"ぴょんぴょん跳ねる。",baseHp:39,atk:11},
- {id:17,name:"ウサモチ",icon:"🐇",type:"ノーマル",evo:18,evoLv:20,desc:"もちもちしている。",baseHp:57,atk:17},
- {id:18,name:"ウサギラス",icon:"🐇",type:"ノーマル",evo:null,evoLv:null,desc:"巨大化したウサギ。かわいいのか怖いのか微妙。",baseHp:80,atk:25},
+ {id:13,name:"ケロリン",icon:"🐸",type:"みず",evo:14,evoLv:16,desc:"よく跳ねるカエル。",baseHp:34,atk:8},
+ {id:14,name:"ケロケロ",icon:"🐸",type:"みず",evo:15,evoLv:36,desc:"鳴き声が大きい。",baseHp:47,atk:13},
+ {id:15,name:"ケロッパ",icon:"🐸",type:"みず",evo:null,evoLv:null,desc:"池の主。",baseHp:69,atk:19},
 
- {id:19,name:"ブタマル",icon:"🐷",type:"ノーマル",evo:20,evoLv:10,desc:"食べることが大好き。",baseHp:44,atk:12},
- {id:20,name:"トンカツ",icon:"🐖",type:"ノーマル",evo:21,evoLv:20,desc:"衣をまとったような雰囲気がある。",baseHp:61,atk:19},
- {id:21,name:"トンカツキング",icon:"🐖",type:"ノーマル",evo:null,evoLv:null,desc:"とんかつ界の頂点。ソース派。",baseHp:85,atk:26},
+ {id:16,name:"ウサピョン",icon:"🐰",type:"うさぎ",evo:17,evoLv:16,desc:"ぴょんぴょん跳ねる。",baseHp:30,atk:9},
+ {id:17,name:"ウサモチ",icon:"🐇",type:"うさぎ",evo:18,evoLv:36,desc:"もちもちしたウサギ。",baseHp:46,atk:14},
+ {id:18,name:"ウサギラス",icon:"🐇",type:"うさぎ",evo:null,evoLv:null,desc:"巨大なウサギ。",baseHp:70,atk:20},
 
- {id:22,name:"サルッキー",icon:"🐵",type:"ノーマル",evo:23,evoLv:10,desc:"バナナを見つけるとテンションが上がる。",baseHp:41,atk:13},
- {id:23,name:"サルゴリ",icon:"🦍",type:"ノーマル",evo:24,evoLv:20,desc:"急にゴリラっぽくなった。",baseHp:65,atk:21},
- {id:24,name:"ゴリゴリラ",icon:"🦍",type:"ノーマル",evo:null,evoLv:null,desc:"名前通りゴリゴリのゴリラ。",baseHp:90,atk:29},
+ {id:19,name:"ブタマル",icon:"🐷",type:"ぶた",evo:20,evoLv:16,desc:"食べるのが大好き。",baseHp:37,atk:8},
+ {id:20,name:"トンカツ",icon:"🐖",type:"ぶた",evo:21,evoLv:36,desc:"名前が不穏。",baseHp:52,atk:15},
+ {id:21,name:"トンカツキング",icon:"🐖",type:"ぶた",evo:null,evoLv:null,desc:"王様になったトンカツ。",baseHp:75,atk:22},
 
- {id:25,name:"モーモー太郎",icon:"🐮",type:"ノーマル",evo:26,evoLv:10,desc:"のんびり屋。",baseHp:47,atk:11},
- {id:26,name:"モーモー次郎",icon:"🐄",type:"ノーマル",evo:27,evoLv:20,desc:"太郎よりちょっとだけ強い。",baseHp:66,atk:18},
- {id:27,name:"ウシキング",icon:"🐂",type:"ノーマル",evo:null,evoLv:null,desc:"牛界のキング。角が立派。",baseHp:94,atk:27},
+ {id:22,name:"サルッキー",icon:"🐒",type:"さる",evo:23,evoLv:16,desc:"いたずら好き。",baseHp:33,atk:10},
+ {id:23,name:"サルゴリ",icon:"🦍",type:"さる",evo:24,evoLv:36,desc:"かなり力持ち。",baseHp:50,atk:16},
+ {id:24,name:"ゴリゴリラ",icon:"🦍",type:"さる",evo:null,evoLv:null,desc:"筋肉がすごい。",baseHp:78,atk:24},
 
- {id:28,name:"キツネン",icon:"🦊",type:"ほのお",evo:29,evoLv:10,desc:"尻尾を振ると小さな火花が出る。",baseHp:40,atk:14},
- {id:29,name:"キツネコ",icon:"🦊",type:"ほのお",evo:30,evoLv:20,desc:"キツネなのかネコなのか分からない。",baseHp:59,atk:21},
- {id:30,name:"キツネックス",icon:"🦊",type:"ほのお",evo:null,evoLv:null,desc:"九尾っぽい雰囲気だけ出している。",baseHp:83,atk:30},
+ {id:25,name:"モーモー太郎",icon:"🐮",type:"うし",evo:26,evoLv:16,desc:"のんびり屋。",baseHp:40,atk:9},
+ {id:26,name:"モーモー次郎",icon:"🐮",type:"うし",evo:27,evoLv:36,desc:"太郎より強い。",baseHp:55,atk:15},
+ {id:27,name:"ウシキング",icon:"🐂",type:"うし",evo:null,evoLv:null,desc:"圧倒的な存在感。",baseHp:82,atk:23},
 
- {id:31,name:"クマッタ",icon:"🐻",type:"ノーマル",evo:32,evoLv:10,desc:"困っているように見えるが、実際は困っていない。",baseHp:50,atk:13},
- {id:32,name:"クマクマ",icon:"🐻",type:"ノーマル",evo:33,evoLv:20,desc:"クマがクマクマしている。",baseHp:70,atk:21},
- {id:33,name:"クマゴロー",icon:"🐻",type:"ノーマル",evo:null,evoLv:null,desc:"山の主。昼寝を邪魔されると怒る。",baseHp:98,atk:28},
+ {id:28,name:"キツネン",icon:"🦊",type:"きつね",evo:29,evoLv:16,desc:"いたずら好きなキツネ。",baseHp:32,atk:11},
+ {id:29,name:"キツネコ",icon:"🦊",type:"きつね",evo:30,evoLv:36,desc:"猫っぽいキツネ。",baseHp:46,atk:16},
+ {id:30,name:"キツネックス",icon:"🦊",type:"きつね",evo:null,evoLv:null,desc:"キツネの最終形態。",baseHp:67,atk:23},
 
- {id:34,name:"パンダム",icon:"🐼",type:"ノーマル",evo:35,evoLv:10,desc:"笹を食べている。",baseHp:43,atk:12},
- {id:35,name:"パンダマン",icon:"🐼",type:"ノーマル",evo:36,evoLv:20,desc:"ヒーローっぽい名前だが特に何もしない。",baseHp:62,atk:20},
- {id:36,name:"パンダ社長",icon:"🐼",type:"ノーマル",evo:null,evoLv:null,desc:"会社を経営している。社員は全員パンダ。",baseHp:88,atk:27},
+ {id:31,name:"クマッタ",icon:"🐻",type:"くま",evo:32,evoLv:16,desc:"ちょっと困っているクマ。",baseHp:42,atk:11},
+ {id:32,name:"クマクマ",icon:"🐻",type:"くま",evo:33,evoLv:36,desc:"大きくなったクマ。",baseHp:57,atk:17},
+ {id:33,name:"クマゴロー",icon:"🐻",type:"くま",evo:null,evoLv:null,desc:"山の王者。",baseHp:85,atk:25},
 
- {id:37,name:"ペンペン",icon:"🐧",type:"みず",evo:38,evoLv:10,desc:"寒い場所が好き。",baseHp:39,atk:11},
- {id:38,name:"ペンギンギン",icon:"🐧",type:"みず",evo:39,evoLv:20,desc:"語尾にギンを付けがち。",baseHp:58,atk:18},
- {id:39,name:"ペンギン帝王",icon:"👑",type:"みず",evo:null,evoLv:null,desc:"ペンギンの王様。王冠が頭に乗っている。",baseHp:81,atk:26},
+ {id:34,name:"パンダム",icon:"🐼",type:"パンダ",evo:35,evoLv:16,desc:"白黒模様が特徴。",baseHp:38,atk:9},
+ {id:35,name:"パンダマン",icon:"🐼",type:"パンダ",evo:36,evoLv:36,desc:"正義感が強い。",baseHp:53,atk:15},
+ {id:36,name:"パンダ社長",icon:"🐼",type:"パンダ",evo:null,evoLv:null,desc:"会社を経営している。",baseHp:76,atk:22},
 
- {id:40,name:"ヘビータ",icon:"🐍",type:"どく",evo:41,evoLv:10,desc:"ヘビーな蛇。",baseHp:41,atk:14},
- {id:41,name:"ヘビヘビ",icon:"🐍",type:"どく",evo:42,evoLv:20,desc:"ヘビが二倍になった。",baseHp:60,atk:20},
- {id:42,name:"ヘビメタ",icon:"🐍",type:"どく",evo:null,evoLv:null,desc:"ヘビなのに音楽が好き。",baseHp:84,atk:29},
+ {id:37,name:"ペンペン",icon:"🐧",type:"こおり",evo:38,evoLv:16,desc:"寒いところが好き。",baseHp:33,atk:9},
+ {id:38,name:"ペンギンギン",icon:"🐧",type:"こおり",evo:39,evoLv:36,desc:"滑るのが得意。",baseHp:49,atk:15},
+ {id:39,name:"ペンギン帝王",icon:"🐧",type:"こおり",evo:null,evoLv:null,desc:"氷原の帝王。",baseHp:72,atk:22},
 
- {id:43,name:"ティラノン",icon:"🦖",type:"ほのお",evo:44,evoLv:10,desc:"恐竜っぽい。",baseHp:55,atk:18},
- {id:44,name:"ティラノンZ",icon:"🦖",type:"ほのお",evo:45,evoLv:20,desc:"Zが付いて強くなった気がする。",baseHp:75,atk:26},
- {id:45,name:"ティラノンDX",icon:"🦖",type:"ほのお",evo:null,evoLv:null,desc:"DXになった。何がDXなのかは不明。",baseHp:105,atk:35},
+ {id:40,name:"ヘビータ",icon:"🐍",type:"へび",evo:41,evoLv:16,desc:"細長いヘビ。",baseHp:31,atk:10},
+ {id:41,name:"ヘビヘビ",icon:"🐍",type:"へび",evo:42,evoLv:36,desc:"かなり長い。",baseHp:48,atk:16},
+ {id:42,name:"ヘビメタ",icon:"🐍",type:"へび",evo:null,evoLv:null,desc:"音楽が好き。",baseHp:70,atk:24},
 
- {id:46,name:"オバケン",icon:"👻",type:"ゴースト",evo:47,evoLv:10,desc:"夜になると現れる。",baseHp:36,atk:16},
- {id:47,name:"オバケッチ",icon:"👻",type:"ゴースト",evo:48,evoLv:20,desc:"いたずら好き。",baseHp:54,atk:23},
- {id:48,name:"オバケ社長",icon:"👻",type:"ゴースト",evo:null,evoLv:null,desc:"社員を夜遅くまで働かせる。",baseHp:78,atk:32},
+ {id:43,name:"ティラノン",icon:"🦖",type:"ドラゴン",evo:44,evoLv:16,desc:"小型の恐竜。",baseHp:45,atk:13},
+ {id:44,name:"ティラノンZ",icon:"🦖",type:"ドラゴン",evo:45,evoLv:36,desc:"かなり凶暴。",baseHp:62,atk:20},
+ {id:45,name:"ティラノンDX",icon:"🦖",type:"ドラゴン",evo:null,evoLv:null,desc:"圧倒的な恐竜。",baseHp:90,atk:28},
 
- {id:49,name:"ホシマル",icon:"⭐",type:"ひかり",evo:50,evoLv:25,desc:"夜空から落ちてきたらしい。",baseHp:60,atk:20},
- {id:50,name:"ホシキング",icon:"👑",type:"ひかり",evo:null,evoLv:null,desc:"星の王。キラキラしている。",baseHp:110,atk:38}
+ {id:46,name:"オバケン",icon:"👻",type:"ゴースト",evo:47,evoLv:16,desc:"夜になると出てくる。",baseHp:30,atk:12},
+ {id:47,name:"オバケッチ",icon:"👻",type:"ゴースト",evo:48,evoLv:36,desc:"いたずらが激しい。",baseHp:45,atk:18},
+ {id:48,name:"オバケ社長",icon:"👻",type:"ゴースト",evo:null,evoLv:null,desc:"会社を経営する幽霊。",baseHp:68,atk:26},
+
+ {id:49,name:"ホシマル",icon:"⭐",type:"ほし",evo:50,evoLv:36,desc:"夜空から落ちてきた星。",baseHp:50,atk:17},
+ {id:50,name:"ホシキング",icon:"🌟",type:"ほし",evo:null,evoLv:null,desc:"星の王様。",baseHp:95,atk:30}
+
 ];
+
+/* =========================================================
+   技
+========================================================= */
 
 const MOVES = [
  {name:"たいあたり",power:8},
@@ -437,1207 +1028,2142 @@ const MOVES = [
  {name:"ほしをなげる",power:24}
 ];
 
+/* =========================================================
+   道具
+========================================================= */
+
 const ITEMS = {
- potion:{name:"傷薬",count:5,heal:30},
- capsule:{name:"パチッとカプセル",count:5,rate:1.0},
- superCapsule:{name:"スーパー・パチッとカプセル",count:2,rate:1.5},
- hyperCapsule:{name:"ハイパー・パチッとカプセル",count:1,rate:2.2}
+
+ potion:{
+   name:"キズぐすり",
+   price:200,
+   sell:100,
+   heal:30,
+   desc:"HPを30回復する。"
+ },
+
+ superPotion:{
+   name:"いいキズぐすり",
+   price:500,
+   sell:250,
+   heal:70,
+   desc:"HPを70回復する。"
+ },
+
+ capsule:{
+   name:"パチッとカプセル",
+   price:300,
+   sell:150,
+   rate:1.0,
+   desc:"普通の捕獲カプセル。"
+ },
+
+ superCapsule:{
+   name:"スーパー・カプセル",
+   price:700,
+   sell:350,
+   rate:1.5,
+   desc:"普通より捕まえやすい。"
+ },
+
+ hyperCapsule:{
+   name:"ハイパー・カプセル",
+   price:1500,
+   sell:750,
+   rate:2.2,
+   desc:"かなり捕まえやすい。"
+ }
+
 };
 
-const CITIES = [
- {id:0,name:"パチタウン",desc:"冒険の始まりの街。"},
- {id:1,name:"モンモンシティ",desc:"商店街がにぎやかな街。"},
- {id:2,name:"パチパチシティ",desc:"大きな森の近くにある街。"},
- {id:3,name:"モンスタウン",desc:"最後の街。"},
+/* =========================================================
+   8マップ
+========================================================= */
+
+/*
+  # = 壁
+  . = 草
+  = = 道
+  T = 木
+  W = 水
+  C = パチモンセンター
+  S = ショップ
+  E = 出口
+*/
+
+const MAPS = [
+
+{
+ id:0,
+ name:"パチタウン",
+ width:11,
+ height:9,
+ tiles:[
+  "###########",
+  "#.........#",
+  "#..CCC....#",
+  "#..CCC....#",
+  "#.........#",
+  "#....===E##",
+  "#....===..#",
+  "#.........#",
+  "###########"
+ ],
+ exits:{
+   "8,5":{map:1,x:1,y:5}
+ }
+},
+
+{
+ id:1,
+ name:"パチタウン周辺",
+ width:13,
+ height:11,
+ tiles:[
+  "#############",
+  "#...T.......#",
+  "#...T..WW...#",
+  "#......WW...#",
+  "#...........#",
+  "#E=====.....#",
+  "#......T....#",
+  "#......T....#",
+  "#...........#",
+  "#...........#",
+  "#############"
+ ],
+ exits:{
+   "1,5":{map:0,x:7,y:5},
+   "12,5":{map:2,x:1,y:5}
+ }
+},
+
+{
+ id:2,
+ name:"モンモンシティ",
+ width:11,
+ height:9,
+ tiles:[
+  "###########",
+  "#.........#",
+  "#..CCC....#",
+  "#..CCC....#",
+  "#.........#",
+  "#E===E....#",
+  "#.........#",
+  "#.........#",
+  "###########"
+ ],
+ exits:{
+   "1,5":{map:1,x:11,y:5},
+   "5,5":{map:3,x:1,y:5}
+ }
+},
+
+{
+ id:3,
+ name:"モンモンシティ周辺",
+ width:13,
+ height:11,
+ tiles:[
+  "#############",
+  "#.....T.....#",
+  "#.....T.....#",
+  "#..WW.......#",
+  "#..WW.......#",
+  "#E====......#",
+  "#......T....#",
+  "#......T....#",
+  "#...........#",
+  "#...........#",
+  "#############"
+ ],
+ exits:{
+   "1,5":{map:2,x:4,y:5},
+   "12,5":{map:4,x:1,y:6}
+ }
+},
+
+{
+ id:4,
+ name:"パチパチシティ",
+ width:11,
+ height:10,
+ tiles:[
+  "###########",
+  "#.........#",
+  "#..CCC....#",
+  "#..CCC....#",
+  "#.........#",
+  "#E===.....#",
+  "#.........#",
+  "#.........#",
+  "#.........#",
+  "###########"
+ ],
+ exits:{
+   "1,5":{map:3,x:11,y:5},
+   "5,5":{map:5,x:1,y:5}
+ }
+},
+
+{
+ id:5,
+ name:"パチパチシティ周辺",
+ width:14,
+ height:11,
+ tiles:[
+  "##############",
+  "#...TT.......#",
+  "#...TT.......#",
+  "#............#",
+  "#....WW......#",
+  "#E====WW.....#",
+  "#............#",
+  "#......TT....#",
+  "#......TT....#",
+  "#............#",
+  "##############"
+ ],
+ exits:{
+   "1,5":{map:4,x:4,y:5},
+   "13,5":{map:6,x:1,y:6}
+ }
+},
+
+{
+ id:6,
+ name:"モンスタウン",
+ width:11,
+ height:10,
+ tiles:[
+  "###########",
+  "#.........#",
+  "#..CCC....#",
+  "#..CCC....#",
+  "#.........#",
+  "#E===.....#",
+  "#.........#",
+  "#.........#",
+  "#.........#",
+  "###########"
+ ],
+ exits:{
+   "1,5":{map:5,x:12,y:5}
+ }
+},
+
+{
+ id:7,
+ name:"秘密の森",
+ width:15,
+ height:12,
+ tiles:[
+  "###############",
+  "#TTT.....TTTTT#",
+  "#T.........T..#",
+  "#T..WW.....T..#",
+  "#...WW.......#",
+  "#E====.......#",
+  "#....TTTT....#",
+  "#....T..T....#",
+  "#....T..T....#",
+  "#............#",
+  "#............#",
+  "###############"
+ ],
+ exits:{}
+}
+
 ];
 
 /* =========================================================
-   ゲーム状態
+   状態
 ========================================================= */
 
 let state = {
+
  started:false,
+
  playerName:"パチモン研究員",
- location:{x:3,y:5,city:0},
+
+ map:0,
+
+ x:5,
+
+ y:6,
+
  party:[],
- boxes:Array.from({length:5},()=>Array(20).fill(null)),
+
+ boxes:Array.from(
+   {length:5},
+   ()=>Array(20).fill(null)
+ ),
+
  dex:[],
+
  items:{
    potion:5,
+   superPotion:0,
    capsule:5,
    superCapsule:2,
    hyperCapsule:1
  },
+
  money:1000,
+
  steps:0,
+
  battle:null
+
 };
 
-let screenMode="map";
-let currentBox=0;
+let currentBox = 0;
 
 /* =========================================================
-   ユーティリティ
+   基本関数
 ========================================================= */
 
 function monsterData(id){
-  return MONSTERS.find(m=>m.id===id);
+ return MONSTERS.find(m=>m.id===id);
 }
 
-function clamp(n,min,max){
-  return Math.max(min,Math.min(max,n));
+function clamp(v,min,max){
+ return Math.max(min,Math.min(max,v));
 }
 
 function createMonster(id,level=5){
-  const d=monsterData(id);
-  const maxHp=d.baseHp+level*3;
-  return {
-    id,
-    level,
-    exp:0,
-    hp:maxHp,
-    maxHp,
-    atk:d.atk+level*2,
-    nickname:d.name
-  };
+
+ const d=monsterData(id);
+
+ const maxHp=
+   d.baseHp+
+   Math.floor((level-1)*2.5);
+
+ return {
+
+   id:id,
+
+   level:level,
+
+   exp:0,
+
+   maxHp:maxHp,
+
+   hp:maxHp,
+
+   atk:d.atk+
+      Math.floor((level-1)*1.3)
+
+ };
+
 }
 
-function monsterName(mon){
-  return monsterData(mon.id).name;
+function getMonsterName(mon){
+ return monsterData(mon.id)?.name || "？？？";
 }
 
 function addDex(id){
-  if(!state.dex.includes(id)){
-    state.dex.push(id);
-  }
-}
 
-function addToParty(mon){
-  if(state.party.length<4){
-    state.party.push(mon);
-    return true;
-  }
+ if(!state.dex.includes(id)){
+   state.dex.push(id);
+ }
 
-  for(let b=0;b<5;b++){
-    for(let s=0;s<20;s++){
-      if(!state.boxes[b][s]){
-        state.boxes[b][s]=mon;
-        return false;
-      }
-    }
-  }
-
-  return false;
-}
-
-function firstAlive(){
-  return state.party.findIndex(m=>m && m.hp>0);
-}
-
-function saveGame(){
-  localStorage.setItem("pachimon_save",JSON.stringify(state));
-  alert("ゲームをセーブしました！");
-}
-
-function loadGame(){
-  try{
-    const saved=localStorage.getItem("pachimon_save");
-    if(saved){
-      state=JSON.parse(saved);
-      state.battle=null;
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-
-function resetGame(){
-  localStorage.removeItem("pachimon_save");
-  location.reload();
-}
-
-/* =========================================================
-   画面
-========================================================= */
-
-function render(){
-  const screen=document.getElementById("screen");
-
-  if(!state.started){
-    renderStart(screen);
-    return;
-  }
-
-  if(screenMode==="map") renderMap(screen);
-  if(screenMode==="menu") renderMenu(screen);
-  if(screenMode==="dex") renderDex(screen);
-  if(screenMode==="party") renderParty(screen);
-  if(screenMode==="box") renderBox(screen);
-  if(screenMode==="battle") renderBattle(screen);
 }
 
 /* =========================================================
    スタート
 ========================================================= */
 
-function renderStart(el){
-
-  el.innerHTML=`
-    <div class="panel center">
-      <div class="big">🥚</div>
-      <h1>パチッとモンスター</h1>
-      <h3>略して「パチモン」</h3>
-      <p>50種類のパチモンを集めよう！</p>
-      <p class="small">
-        パチモンセンターで回復しながら<br>
-        パチモン図鑑を完成させよう！
-      </p>
-    </div>
-
-    <div class="panel">
-      <h2>最初のパチモンを選ぼう！</h2>
-
-      <button class="main choice" onclick="chooseStarter(1)">
-        🐣 ピヨカラ
-      </button>
-
-      <button class="main choice" onclick="chooseStarter(4)">
-        🐶 イヌヌワン
-      </button>
-
-      <button class="main choice" onclick="chooseStarter(7)">
-        🐱 ネココネコ
-      </button>
-    </div>
-  `;
-}
-
 function chooseStarter(id){
-  state.started=true;
-  const mon=createMonster(id,5);
-  state.party=[mon];
-  addDex(id);
-  saveSilent();
-  render();
-}
 
-function saveSilent(){
-  localStorage.setItem("pachimon_save",JSON.stringify(state));
-}
+ state.started=true;
 
-/* =========================================================
-   マップ
-========================================================= */
+ const starter=createMonster(id,5);
 
-function renderMap(el){
+ state.party=[starter];
 
-  const map=[
-    ["🌲","🌲","🌲","🛣️","🛣️","🌲","🌲"],
-    ["🌲","🌿","🌿","🛣️","🌿","🌿","🌲"],
-    ["🌲","🌿","🌿","🛣️","🌿","🌿","🌲"],
-    ["🏠","🏠","🏠","🛣️","🏠","🏠","🏠"],
-    ["🌲","🌿","🌿","🛣️","🌿","🌿","🌲"],
-    ["🌲","🌿","🌿","🛣️","🌿","🌿","🌲"],
-    ["🌲","🌲","🌲","🛣️","🛣️","🌲","🌲"]
-  ];
+ addDex(id);
 
-  let cells="";
+ state.map=0;
+ state.x=5;
+ state.y=6;
 
-  for(let y=0;y<7;y++){
-    for(let x=0;x<7;x++){
+ saveGame(false);
 
-      let content=map[y][x];
+ showScreen("mapScreen");
 
-      if(x===state.location.x && y===state.location.y){
-        content="🧑";
-      }
+ renderAll();
 
-      let cls="map-cell";
+ setMessage(
+   `${getMonsterName(starter)}を仲間にしました！`
+ );
 
-      if(map[y][x]==="🛣️") cls+=" road";
-      if(map[y][x]==="🏠") cls+=" city";
-
-      cells+=`
-        <button
-          class="${cls}"
-          onclick="movePlayer(${x},${y})"
-          aria-label="${x},${y}">
-          ${content}
-        </button>
-      `;
-    }
-  }
-
-  const city=CITIES[state.location.city];
-
-  el.innerHTML=`
-    <div class="panel">
-      <div>
-        <strong>📍 ${city.name}</strong>
-      </div>
-      <div class="small">${city.desc}</div>
-    </div>
-
-    <div class="map">
-      ${cells}
-    </div>
-
-    <div class="panel">
-      <h3>現在のパチモン</h3>
-      ${partyMiniHTML()}
-    </div>
-
-    <div class="menu-grid">
-      <button class="main blue" onclick="screenMode='menu';render()">📋 メニュー</button>
-      <button class="main green" onclick="healAtCenter()">🏥 センター</button>
-    </div>
-  `;
-}
-
-function movePlayer(x,y){
-
-  const dx=Math.abs(x-state.location.x);
-  const dy=Math.abs(y-state.location.y);
-
-  if(dx+dy!==1){
-    return;
-  }
-
-  state.location.x=x;
-  state.location.y=y;
-  state.steps++;
-
-  /* 家のマス */
-  if(x===0 && y===3){
-    state.location.city=0;
-    healAtCenter(true);
-    return;
-  }
-
-  if(x===6 && y===3){
-    state.location.city=1;
-    healAtCenter(true);
-    return;
-  }
-
-  if(x===0 && y===0){
-    state.location.city=2;
-    healAtCenter(true);
-    return;
-  }
-
-  if(x===6 && y===0){
-    state.location.city=3;
-    healAtCenter(true);
-    return;
-  }
-
-  /* 道を歩いたらエンカウント */
-  if(Math.random()<0.30){
-    startWildBattle();
-    return;
-  }
-
-  saveSilent();
-  render();
-}
-
-function healAtCenter(silent=false){
-
-  state.party.forEach(m=>{
-    m.hp=m.maxHp;
-  });
-
-  if(!silent){
-    alert("パチモンセンターで全回復しました！");
-  }
-
-  saveSilent();
-  render();
 }
 
 /* =========================================================
-   パーティ
+   画面切替
 ========================================================= */
 
-function partyMiniHTML(){
+function showScreen(id){
 
-  return state.party.map((m,i)=>{
-    const d=monsterData(m.id);
-    const hp=Math.max(0,m.hp);
-    const percent=hp/m.maxHp*100;
+ document.querySelectorAll(".screen")
+   .forEach(el=>el.classList.remove("active"));
 
-    return `
-      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
-        <span style="font-size:30px">${d.icon}</span>
-        <div style="flex:1">
-          <strong>${d.name}</strong>
-          Lv.${m.level}
-          <div class="hpbar">
-            <div class="hpfill" style="width:${percent}%"></div>
-          </div>
-          <div class="small">${hp}/${m.maxHp} HP</div>
-        </div>
-      </div>
-    `;
-  }).join("");
+ document.getElementById(id)
+   .classList.add("active");
+
 }
 
-function renderParty(el){
+/* =========================================================
+   マップ描画
+========================================================= */
 
-  el.innerHTML=`
-    <div class="panel">
-      <h2>👥 手持ち</h2>
-      <p>最大4体まで。</p>
-    </div>
+function renderMap(){
 
-    ${state.party.map((m,i)=>partyCardHTML(m,i)).join("")}
+ const map=MAPS[state.map];
 
-    <button class="main blue" onclick="screenMode='menu';render()">
-      戻る
-    </button>
-  `;
+ const grid=document.getElementById("mapGrid");
+
+ grid.innerHTML="";
+
+ grid.style.gridTemplateColumns=
+   `repeat(${map.width},1fr)`;
+
+ document.getElementById("mapName")
+   .textContent=map.name;
+
+ for(let y=0;y<map.height;y++){
+
+   for(let x=0;x<map.width;x++){
+
+     let ch=map.tiles[y][x];
+
+     const tile=document.createElement("div");
+
+     tile.className="tile";
+
+     if(ch==="#"){
+       tile.classList.add("wall");
+       tile.textContent="🧱";
+     }
+
+     else if(ch==="."){
+       tile.classList.add("grass");
+       tile.textContent="🌱";
+     }
+
+     else if(ch==="="){
+       tile.classList.add("road");
+       tile.textContent="";
+     }
+
+     else if(ch==="T"){
+       tile.classList.add("tree");
+       tile.textContent="🌳";
+     }
+
+     else if(ch==="W"){
+       tile.classList.add("water");
+       tile.textContent="🌊";
+     }
+
+     else if(ch==="C"){
+       tile.classList.add("center");
+       tile.textContent="🏥";
+     }
+
+     else if(ch==="S"){
+       tile.classList.add("shop");
+       tile.textContent="🛒";
+     }
+
+     else if(ch==="E"){
+       tile.classList.add("exit");
+       tile.textContent="➡️";
+     }
+
+     if(x===state.x && y===state.y){
+
+       tile.classList.add("player");
+
+       tile.innerHTML=
+         `<span class="playerIcon">🧑</span>`;
+
+     }
+
+     grid.appendChild(tile);
+
+   }
+
+ }
+
+ updateHUD();
+
 }
 
-function partyCardHTML(m,i){
+/* =========================================================
+   移動
+========================================================= */
 
-  const d=monsterData(m.id);
-  const xpPercent=clamp(m.exp/100*100,0,100);
+function move(dx,dy){
 
-  return `
-    <div class="panel">
-      <div style="display:flex;gap:15px;align-items:center;">
-        <div class="monster-icon">${d.icon}</div>
-        <div style="flex:1">
-          <h3>${d.name}</h3>
-          <div>Lv.${m.level}</div>
-          <div>タイプ：${d.type}</div>
+ if(!state.started) return;
 
-          <div class="hpbar">
-            <div class="hpfill" style="width:${m.hp/m.maxHp*100}%"></div>
-          </div>
+ const map=MAPS[state.map];
 
-          <div class="small">
-            HP ${m.hp}/${m.maxHp}
-          </div>
+ const nx=state.x+dx;
+ const ny=state.y+dy;
 
-          <div class="xpbar">
-            <div class="xpfill" style="width:${xpPercent}%"></div>
-          </div>
-        </div>
-      </div>
+ if(
+   nx<0 ||
+   ny<0 ||
+   nx>=map.width ||
+   ny>=map.height
+ ){
+   return;
+ }
 
-      <button class="main" onclick="showMonster(${i})">
-        詳細を見る
-      </button>
-    </div>
-  `;
+ const tile=map.tiles[ny][nx];
+
+ if(tile==="#"){
+   setMessage("壁があって進めません。");
+   return;
+ }
+
+ if(tile==="T"){
+   setMessage("木があって進めません。");
+   return;
+ }
+
+ if(tile==="W"){
+   setMessage("水があって進めません。");
+   return;
+ }
+
+ state.x=nx;
+ state.y=ny;
+
+ state.steps++;
+
+ checkTile();
+
+ renderMap();
+
 }
 
-function showMonster(index){
+/* =========================================================
+   マップイベント
+========================================================= */
 
-  const m=state.party[index];
-  const d=monsterData(m.id);
+function checkTile(){
 
-  openModal(`
-    <h2>${d.icon} ${d.name}</h2>
-    <p>No.${String(d.id).padStart(3,"0")}</p>
-    <p>${d.desc}</p>
+ const map=MAPS[state.map];
 
-    <hr>
+ const tile=map.tiles[state.y][state.x];
 
-    <p>タイプ：${d.type}</p>
-    <p>レベル：${m.level}</p>
-    <p>HP：${m.hp}/${m.maxHp}</p>
-    <p>攻撃力：${m.atk}</p>
+ /* 出口 */
 
-    <button class="main green" onclick="closeModal()">
-      閉じる
-    </button>
-  `);
+ if(tile==="E"){
+
+   const exit=
+     map.exits[`${state.x},${state.y}`];
+
+   if(exit){
+
+     changeMap(
+       exit.map,
+       exit.x,
+       exit.y
+     );
+
+     return;
+
+   }
+
+ }
+
+ /* パチモンセンター */
+
+ if(tile==="C"){
+
+   healParty();
+
+   setMessage(
+     "パチモンセンターで全員のHPが回復しました！"
+   );
+
+   setTimeout(()=>{
+     openShop();
+   },150);
+
+   return;
+
+ }
+
+ /* 草・道でエンカウント */
+
+ if(tile==="." || tile==="="){
+
+   const chance=
+     tile==="." ? 0.25 : 0.12;
+
+   if(Math.random()<chance){
+
+     startWildBattle();
+
+   }
+
+ }
+
+}
+
+/* =========================================================
+   マップ変更
+========================================================= */
+
+function changeMap(mapId,x,y){
+
+ state.map=mapId;
+ state.x=x;
+ state.y=y;
+
+ renderMap();
+
+ setMessage(
+   `${MAPS[mapId].name}に入りました！`
+ );
+
+}
+
+/* =========================================================
+   全回復
+========================================================= */
+
+function healParty(){
+
+ state.party.forEach(mon=>{
+   mon.hp=mon.maxHp;
+ });
+
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+ document.getElementById("money")
+   .textContent=state.money;
+
+ document.getElementById("steps")
+   .textContent=state.steps;
+
+}
+
+/* =========================================================
+   メッセージ
+========================================================= */
+
+function setMessage(text){
+
+ document.getElementById("message")
+   .textContent=text;
+
 }
 
 /* =========================================================
    図鑑
 ========================================================= */
 
-function renderDex(el){
+function openDex(){
 
-  el.innerHTML=`
-    <div class="panel">
-      <h2>📖 パチモン図鑑</h2>
-      <p>
-        登録数：${state.dex.length} / ${MONSTERS.length}
-      </p>
-    </div>
+ closeOverlays();
 
-    <div class="grid2">
-      ${MONSTERS.map(m=>{
-        const known=state.dex.includes(m.id);
+ const grid=
+   document.getElementById("dexGrid");
 
-        if(!known){
-          return `
-            <div class="monster-card">
-              <div class="monster-icon">❓</div>
-              <strong>No.${String(m.id).padStart(3,"0")}</strong>
-              <div>？？？？</div>
-            </div>
-          `;
-        }
+ grid.innerHTML="";
 
-        return `
-          <button class="monster-card" onclick="showDex(${m.id})">
-            <div class="monster-icon">${m.icon}</div>
-            <strong>No.${String(m.id).padStart(3,"0")}</strong>
-            <div>${m.name}</div>
-          </button>
-        `;
-      }).join("")}
-    </div>
+ MONSTERS.forEach(d=>{
 
-    <button class="main blue" onclick="screenMode='menu';render()">
-      戻る
-    </button>
-  `;
+   const seen=
+     state.dex.includes(d.id);
+
+   const div=
+     document.createElement("div");
+
+   div.className="dexItem";
+
+   if(!seen){
+
+     div.classList.add("dexUnknown");
+
+     div.innerHTML=`
+       <b>No.${d.id}</b><br>
+       ？？？？？
+     `;
+
+   }else{
+
+     div.innerHTML=`
+       <b>No.${d.id} ${d.name}</b>
+       ${d.icon}
+       <br>
+       <span class="small">
+       タイプ：${d.type}<br>
+       ${d.desc}
+       </span>
+     `;
+
+   }
+
+   grid.appendChild(div);
+
+ });
+
+ document.getElementById("dexPanel")
+   .classList.add("active");
+
 }
 
-function showDex(id){
+/* =========================================================
+   手持ち
+========================================================= */
 
-  const d=monsterData(id);
+function openParty(){
 
-  let evo="なし";
+ closeOverlays();
 
-  if(d.evo){
-    evo=`Lv.${d.evoLv} → ${monsterData(d.evo).name}`;
-  }
+ const list=
+   document.getElementById("partyList");
 
-  openModal(`
-    <div class="center">
-      <div class="big">${d.icon}</div>
-      <h2>No.${String(d.id).padStart(3,"0")} ${d.name}</h2>
-    </div>
+ list.innerHTML="";
 
-    <p>${d.desc}</p>
+ state.party.forEach((mon,index)=>{
 
-    <p>タイプ：${d.type}</p>
-    <p>進化：${evo}</p>
+   const d=monsterData(mon.id);
 
-    <button class="main" onclick="closeModal()">
-      閉じる
-    </button>
-  `);
+   const div=
+     document.createElement("div");
+
+   div.className=
+     "monsterCard"+
+     (mon.hp<=0 ? " dead":"");
+
+   const hpPercent=
+     clamp(
+       mon.hp/mon.maxHp*100,
+       0,
+       100
+     );
+
+   div.innerHTML=`
+
+     <div class="monsterIcon">
+       ${d.icon}
+     </div>
+
+     <b>${d.name}</b>
+
+     <div>
+       Lv.${mon.level}
+     </div>
+
+     <div class="hpbar">
+       <div
+         class="hpfill"
+         style="width:${hpPercent}%"
+       ></div>
+     </div>
+
+     <div class="small">
+       HP ${mon.hp}/${mon.maxHp}
+       ／ EXP ${mon.exp}/100
+     </div>
+
+     <button onclick="showPartyDetail(${index})">
+       詳細
+     </button>
+
+   `;
+
+   list.appendChild(div);
+
+ });
+
+ document.getElementById("partyPanel")
+   .classList.add("active");
+
+}
+
+/* =========================================================
+   手持ち詳細
+========================================================= */
+
+function showPartyDetail(index){
+
+ const mon=state.party[index];
+
+ const d=monsterData(mon.id);
+
+ let html=`
+
+   <h2>${d.icon} ${d.name}</h2>
+
+   <p>
+     Lv.${mon.level}<br>
+     HP ${mon.hp}/${mon.maxHp}<br>
+     攻撃 ${mon.atk}<br>
+     経験値 ${mon.exp}/100
+   </p>
+
+   <p>
+     タイプ：${d.type}<br>
+     ${d.desc}
+   </p>
+
+   <h3>進化</h3>
+
+ `;
+
+ if(d.evo){
+
+   html+=`
+     <p>
+       Lv.${d.evoLv}で
+       ${monsterData(d.evo).name}
+       に進化
+     </p>
+   `;
+
+ }else{
+
+   html+=`
+     <p>これ以上進化しません。</p>
+   `;
+
+ }
+
+ html+=`
+
+   <div class="modalButtons">
+
+     <button onclick="openBoxForParty(${index})">
+       📦 BOXへ預ける
+     </button>
+
+     <button onclick="closeModal()">
+       閉じる
+     </button>
+
+   </div>
+
+ `;
+
+ openModal(html);
+
 }
 
 /* =========================================================
    BOX
 ========================================================= */
 
-function renderBox(el){
+function openBox(){
 
-  el.innerHTML=`
-    <div class="panel">
-      <h2>📦 パチモンBOX</h2>
+ closeOverlays();
 
-      <div class="tabs">
-        ${[0,1,2,3,4].map(i=>`
-          <button
-            class="tab ${currentBox===i?"selected":""}"
-            onclick="currentBox=${i};render()">
-            BOX${i+1}
-          </button>
-        `).join("")}
-      </div>
+ renderBox();
 
-      <p>
-        BOX${currentBox+1}：
-        ${state.boxes[currentBox].filter(Boolean).length}/20
-      </p>
-    </div>
+ document.getElementById("boxPanel")
+   .classList.add("active");
 
-    <div class="grid2">
-      ${state.boxes[currentBox].map((m,i)=>{
-        if(!m){
-          return `
-            <div class="monster-card">
-              <div style="font-size:40px">⬜</div>
-              <div>空き</div>
-            </div>
-          `;
-        }
-
-        const d=monsterData(m.id);
-
-        return `
-          <button class="monster-card"
-            onclick="boxMonster(${i})">
-            <div class="monster-icon">${d.icon}</div>
-            <strong>${d.name}</strong>
-            <div>Lv.${m.level}</div>
-          </button>
-        `;
-      }).join("")}
-    </div>
-
-    <button class="main blue" onclick="screenMode='menu';render()">
-      戻る
-    </button>
-  `;
 }
 
-function boxMonster(slot){
+function renderBox(){
 
-  const m=state.boxes[currentBox][slot];
+ const tabs=
+   document.getElementById("boxTabs");
 
-  if(!m) return;
+ tabs.innerHTML="";
 
-  const d=monsterData(m.id);
+ for(let i=0;i<5;i++){
 
-  openModal(`
-    <h2>${d.icon} ${d.name}</h2>
-    <p>Lv.${m.level}</p>
-    <p>HP ${m.hp}/${m.maxHp}</p>
+   const btn=
+     document.createElement("button");
 
-    <button class="main green"
-      onclick="boxToParty(${slot})">
-      手持ちに入れる
-    </button>
+   btn.textContent=`BOX ${i+1}`;
 
-    <button class="main"
-      onclick="showMonsterBoxDetail(${slot})">
-      詳細
-    </button>
+   btn.onclick=()=>{
+     currentBox=i;
+     renderBox();
+   };
 
-    <button class="main"
-      onclick="closeModal()">
-      閉じる
-    </button>
-  `);
+   if(i===currentBox){
+     btn.style.background="#ffdf65";
+   }
+
+   tabs.appendChild(btn);
+
+ }
+
+ const grid=
+   document.getElementById("boxGrid");
+
+ grid.innerHTML="";
+
+ state.boxes[currentBox]
+   .forEach((mon,index)=>{
+
+     const slot=
+       document.createElement("div");
+
+     slot.className=
+       "boxSlot"+
+       (mon ? " occupied":"");
+
+     if(mon){
+
+       const d=monsterData(mon.id);
+
+       slot.innerHTML=`
+         <div class="slotIcon">${d.icon}</div>
+         <b>${d.name}</b>
+         <span class="small">
+           Lv.${mon.level}
+         </span>
+       `;
+
+       slot.onclick=()=>{
+         boxSlotAction(index);
+       };
+
+     }else{
+
+       slot.innerHTML=`
+         <span class="small">
+           ${index+1}<br>
+           空き
+         </span>
+       `;
+
+     }
+
+     grid.appendChild(slot);
+
+   });
+
 }
 
-function showMonsterBoxDetail(slot){
+/* =========================================================
+   BOX操作
+========================================================= */
 
-  const m=state.boxes[currentBox][slot];
-  const d=monsterData(m.id);
+function boxSlotAction(slot){
 
-  openModal(`
-    <div class="center">
-      <div class="big">${d.icon}</div>
-      <h2>${d.name}</h2>
-    </div>
+ const mon=
+   state.boxes[currentBox][slot];
 
-    <p>No.${String(d.id).padStart(3,"0")}</p>
-    <p>${d.desc}</p>
-    <p>Lv.${m.level}</p>
-    <p>HP ${m.hp}/${m.maxHp}</p>
-    <p>攻撃力 ${m.atk}</p>
+ if(!mon) return;
 
-    <button class="main" onclick="closeModal()">閉じる</button>
-  `);
+ let html=`
+
+   <h2>${monsterData(mon.id).icon}
+       ${monsterData(mon.id).name}</h2>
+
+   <p>
+     Lv.${mon.level}<br>
+     HP ${mon.hp}/${mon.maxHp}
+   </p>
+
+   <div class="modalButtons">
+
+ `;
+
+ if(state.party.length<4){
+
+   html+=`
+     <button onclick="boxToParty(${slot})">
+       手持ちに加える
+     </button>
+   `;
+
+ }else{
+
+   html+=`
+     <button onclick="swapBoxWithParty(${slot})">
+       手持ちと入れ替える
+     </button>
+   `;
+
+ }
+
+ html+=`
+
+     <button onclick="closeModal()">
+       キャンセル
+     </button>
+
+   </div>
+ `;
+
+ openModal(html);
+
 }
 
 function boxToParty(slot){
 
-  if(state.party.length>=4){
-    alert("手持ちがいっぱいです！");
-    return;
-  }
+ const mon=
+   state.boxes[currentBox][slot];
 
-  const m=state.boxes[currentBox][slot];
+ if(!mon) return;
 
-  state.party.push(m);
-  state.boxes[currentBox][slot]=null;
+ if(state.party.length>=4){
 
-  closeModal();
-  saveSilent();
-  render();
+   alert("手持ちは4匹までです。");
+
+   return;
+
+ }
+
+ state.party.push(mon);
+
+ state.boxes[currentBox][slot]=null;
+
+ closeModal();
+
+ renderBox();
+
+ setMessage(
+   `${getMonsterName(mon)}を手持ちに加えました！`
+ );
+
+}
+
+function swapBoxWithParty(slot){
+
+ const boxMon=
+   state.boxes[currentBox][slot];
+
+ if(!boxMon) return;
+
+ let html=`
+   <h2>入れ替えるパチモンを選択</h2>
+ `;
+
+ state.party.forEach((mon,index)=>{
+
+   const d=monsterData(mon.id);
+
+   html+=`
+     <button
+       style="width:100%;text-align:left"
+       onclick="doBoxPartySwap(${slot},${index})"
+     >
+       ${d.icon} ${d.name}
+       Lv.${mon.level}
+     </button>
+   `;
+
+ });
+
+ html+=`
+   <button
+     onclick="closeModal()"
+     style="width:100%"
+   >
+     キャンセル
+   </button>
+ `;
+
+ openModal(html);
+
+}
+
+function doBoxPartySwap(slot,partyIndex){
+
+ const temp=
+   state.party[partyIndex];
+
+ state.party[partyIndex]=
+   state.boxes[currentBox][slot];
+
+ state.boxes[currentBox][slot]=temp;
+
+ closeModal();
+
+ renderBox();
+
+ setMessage("手持ちとBOXを入れ替えました！");
+
 }
 
 /* =========================================================
-   メニュー
+   手持ち→BOX
 ========================================================= */
 
-function renderMenu(el){
+function openBoxForParty(partyIndex){
 
-  el.innerHTML=`
-    <div class="panel">
-      <h2>📋 メニュー</h2>
+ closeModal();
 
-      <div class="money">
-        💰 ${state.money}円
-      </div>
-    </div>
+ if(state.party.length<=1){
 
-    <div class="menu-grid">
+   alert(
+     "手持ちが1匹しかいないため、預けられません。"
+   );
 
-      <button class="main blue"
-        onclick="screenMode='dex';render()">
-        📖<br>パチモン図鑑
-      </button>
+   return;
 
-      <button class="main green"
-        onclick="screenMode='party';render()">
-        👥<br>手持ち
-      </button>
+ }
 
-      <button class="main yellow"
-        onclick="screenMode='box';render()">
-        📦<br>パチモンBOX
-      </button>
+ let html=`
 
-      <button class="main"
-        onclick="showItems()">
-        🎒<br>どうぐ
-      </button>
+   <h2>預けるBOXを選択</h2>
 
-      <button class="main"
-        onclick="saveGame()">
-        💾<br>セーブ
-      </button>
+   <p>
+     空いているBOXスロットを選んでください。
+   </p>
 
-      <button class="main danger"
-        onclick="confirmReset()">
-        🔄<br>リセット
-      </button>
+ `;
 
-    </div>
+ for(let b=0;b<5;b++){
 
-    <button class="main" onclick="screenMode='map';render()">
-      🗺️ マップに戻る
-    </button>
-  `;
+   const empty=
+     state.boxes[b]
+       .findIndex(x=>x===null);
+
+   if(empty>=0){
+
+     html+=`
+       <button
+         style="width:100%"
+         onclick="
+           partyToBox(
+             ${partyIndex},
+             ${b},
+             ${empty}
+           )
+         "
+       >
+         BOX ${b+1}
+         ／ ${empty+1}番
+       </button>
+     `;
+
+   }
+
+ }
+
+ html+=`
+   <button
+     onclick="closeModal()"
+     style="width:100%"
+   >
+     キャンセル
+   </button>
+ `;
+
+ openModal(html);
+
 }
 
-function showItems(){
+function partyToBox(partyIndex,boxIndex,slot){
 
-  openModal(`
-    <h2>🎒 どうぐ</h2>
+ const mon=
+   state.party[partyIndex];
 
-    <p>💊 傷薬：${state.items.potion}個</p>
-    <p>⚪ パチッとカプセル：${state.items.capsule}個</p>
-    <p>🔵 スーパー・パチッとカプセル：${state.items.superCapsule}個</p>
-    <p>🟣 ハイパー・パチッとカプセル：${state.items.hyperCapsule}個</p>
+ state.boxes[boxIndex][slot]=mon;
 
-    <button class="main" onclick="closeModal()">
-      閉じる
-    </button>
-  `);
-}
+ state.party.splice(partyIndex,1);
 
-function confirmReset(){
+ closeModal();
 
-  openModal(`
-    <h2>🔄 リセット</h2>
+ closeOverlays();
 
-    <p>
-      セーブデータをすべて削除して<br>
-      最初からやり直しますか？
-    </p>
+ setMessage(
+   `${getMonsterName(mon)}をBOXへ預けました。`
+ );
 
-    <button class="main danger" onclick="resetGame()">
-      リセットしますか？
-    </button>
-
-    <button class="main" onclick="closeModal()">
-      キャンセル
-    </button>
-  `);
 }
 
 /* =========================================================
-   バトル
+   戦闘開始
 ========================================================= */
 
 function startWildBattle(){
 
-  const possible=MONSTERS.filter(m=>m.id<=48);
+ const alive=
+   firstAlive();
 
-  const d=possible[Math.floor(Math.random()*possible.length)];
+ if(alive<0){
 
-  const level=clamp(
-    3+Math.floor(state.steps/10),
-    3,
-    30
-  );
+   healParty();
 
-  const enemy=createMonster(d.id,level);
+   setMessage(
+     "手持ちが全員ひんしだったため、回復しました。"
+   );
 
-  addDex(d.id);
+   return;
 
-  state.battle={
-    enemy,
-    playerIndex:firstAlive(),
-    phase:"menu",
-    log:`野生の ${d.name} が現れた！`
-  };
+ }
 
-  screenMode="battle";
-  render();
+ let id;
+
+ /*
+   マップが進むほど強いパチモンが出る
+ */
+
+ const maxId=
+   state.map>=6 ? 50 :
+   state.map>=4 ? 42 :
+   state.map>=2 ? 36 :
+   30;
+
+ do{
+
+   id=
+     Math.floor(
+       Math.random()*maxId
+     )+1;
+
+ }while(
+   id>50
+ );
+
+ const level=
+   Math.max(
+     3,
+     Math.min(
+       35,
+       3+
+       state.map*3+
+       Math.floor(Math.random()*6)
+     )
+   );
+
+ const enemy=
+   createMonster(id,level);
+
+ state.battle={
+
+   enemy:enemy,
+
+   playerIndex:alive,
+
+   captured:false
+
+ };
+
+ addDex(id);
+
+ showScreen("battleScreen");
+
+ renderBattle();
+
+ setBattleText(
+   `野生の${getMonsterName(enemy)}が現れた！`
+ );
+
 }
 
-function renderBattle(el){
+/* =========================================================
+   バトル描画
+========================================================= */
 
-  const b=state.battle;
+function renderBattle(){
 
-  if(!b){
-    screenMode="map";
-    render();
-    return;
-  }
+ const battle=state.battle;
 
-  const enemy=b.enemy;
-  const player=state.party[b.playerIndex];
+ if(!battle) return;
 
-  const ed=monsterData(enemy.id);
-  const pd=monsterData(player.id);
+ const enemy=battle.enemy;
 
-  el.innerHTML=`
-    <div class="battle">
+ const player=
+   state.party[battle.playerIndex];
 
-      <div class="battle-mon enemy">
+ const enemyData=
+   monsterData(enemy.id);
 
-        <div class="battle-status">
-          <strong>${ed.name}</strong>
-          Lv.${enemy.level}
+ const playerData=
+   monsterData(player.id);
 
-          <div class="hpbar">
-            <div class="hpfill"
-              style="width:${enemy.hp/enemy.maxHp*100}%">
-            </div>
-          </div>
+ document.getElementById("wildName")
+   .textContent=enemyData.name;
 
-          HP ${enemy.hp}/${enemy.maxHp}
-        </div>
+ document.getElementById("wildLevel")
+   .textContent=enemy.level;
 
-        <div class="battle-icon">
-          ${ed.icon}
-        </div>
+ document.getElementById("wildHp")
+   .textContent=Math.max(0,enemy.hp);
 
-      </div>
+ document.getElementById("wildMaxHp")
+   .textContent=enemy.maxHp;
 
-      <div class="battle-mon player-mon">
+ document.getElementById("wildHpFill")
+   .style.width=
+     `${clamp(enemy.hp/enemy.maxHp*100,0,100)}%`;
 
-        <div class="battle-icon">
-          ${pd.icon}
-        </div>
+ document.getElementById("wildIcon")
+   .textContent=enemyData.icon;
 
-        <div class="battle-status">
-          <strong>${pd.name}</strong>
-          Lv.${player.level}
+ document.getElementById("playerNameBattle")
+   .textContent=playerData.name;
 
-          <div class="hpbar">
-            <div class="hpfill"
-              style="width:${player.hp/player.maxHp*100}%">
-            </div>
-          </div>
+ document.getElementById("playerLevelBattle")
+   .textContent=player.level;
 
-          HP ${player.hp}/${player.maxHp}
-        </div>
+ document.getElementById("playerHpBattle")
+   .textContent=Math.max(0,player.hp);
 
-      </div>
+ document.getElementById("playerMaxHpBattle")
+   .textContent=player.maxHp;
 
-    </div>
+ document.getElementById("playerHpFill")
+   .style.width=
+     `${clamp(player.hp/player.maxHp*100,0,100)}%`;
 
-    <div class="log">
-      ${b.log}
-    </div>
+ document.getElementById("playerIcon")
+   .textContent=playerData.icon;
 
-    <div class="battle-menu">
-      ${battleMenuHTML()}
-    </div>
-  `;
 }
 
-function battleMenuHTML(){
+/* =========================================================
+   戦闘メニュー
+========================================================= */
 
-  const b=state.battle;
+function battleFight(){
 
-  if(b.phase==="moves"){
-    return `
-      <div class="panel">
-        <h3>技を選んでください</h3>
+ let html=`
+   <h2>技を選択</h2>
+ `;
 
-        <div class="grid2">
-          ${MOVES.slice(0,4).map((move,i)=>`
-            <button class="main choice"
-              onclick="useMove(${i})">
-              ${move.name}
-            </button>
-          `).join("")}
-        </div>
+ MOVES.forEach((move,index)=>{
 
-        <button class="main" onclick="state.battle.phase='menu';render()">
-          戻る
-        </button>
-      </div>
-    `;
-  }
+   html+=`
+     <button
+       style="width:100%;text-align:left"
+       onclick="useMove(${index})"
+     >
+       ⚔️ ${move.name}
+       ／ 威力 ${move.power}
+     </button>
+   `;
 
-  if(b.phase==="items"){
-    return `
-      <div class="panel">
-        <h3>どうぐ</h3>
+ });
 
-        <button class="main"
-          onclick="usePotion()">
-          💊 傷薬 ×${state.items.potion}
-        </button>
+ html+=`
+   <button
+     onclick="closeModal()"
+     style="width:100%"
+   >
+     戻る
+   </button>
+ `;
 
-        <button class="main"
-          onclick="useCapsule('capsule')">
-          ⚪ パチッとカプセル ×${state.items.capsule}
-        </button>
+ openModal(html);
 
-        <button class="main"
-          onclick="useCapsule('superCapsule')">
-          🔵 スーパー・パチッとカプセル ×${state.items.superCapsule}
-        </button>
-
-        <button class="main"
-          onclick="useCapsule('hyperCapsule')">
-          🟣 ハイパー・パチッとカプセル ×${state.items.hyperCapsule}
-        </button>
-
-        <button class="main" onclick="state.battle.phase='menu';render()">
-          戻る
-        </button>
-      </div>
-    `;
-  }
-
-  return `
-    <div class="grid3">
-
-      <button class="main choice"
-        onclick="state.battle.phase='moves';render()">
-        ⚔️<br>たたかう
-      </button>
-
-      <button class="main choice"
-        onclick="state.battle.phase='items';render()">
-        🎒<br>どうぐ
-      </button>
-
-      <button class="main choice"
-        onclick="runAway()">
-        🏃<br>逃げる
-      </button>
-
-    </div>
-  `;
 }
 
-function useMove(index){
+/* =========================================================
+   技使用
+========================================================= */
 
-  const b=state.battle;
-  const player=state.party[b.playerIndex];
-  const enemy=b.enemy;
+function useMove(moveIndex){
 
-  const move=MOVES[index];
+ closeModal();
 
-  let damage=
-    move.power+
-    player.atk+
-    Math.floor(Math.random()*8);
+ const battle=state.battle;
 
-  damage=Math.max(1,damage);
+ if(!battle) return;
 
-  enemy.hp=clamp(enemy.hp-damage,0,enemy.maxHp);
+ const player=
+   state.party[battle.playerIndex];
 
-  b.log=`
-    ${monsterName(player)}の<br>
-    「${move.name}」！
-    ${damage}ダメージ！
-  `;
+ const enemy=
+   battle.enemy;
 
-  if(enemy.hp<=0){
-    winBattle();
-    return;
-  }
+ const move=
+   MOVES[moveIndex];
 
-  setTimeout(enemyTurn,600);
+ let damage=
+   move.power+
+   player.atk+
+   Math.floor(Math.random()*6);
 
-  render();
+ enemy.hp=
+   Math.max(
+     0,
+     enemy.hp-damage
+   );
+
+ setBattleText(
+   `${getMonsterName(player)}の「${move.name}」！ ${damage}ダメージ！`
+ );
+
+ renderBattle();
+
+ if(enemy.hp<=0){
+
+   setTimeout(()=>{
+     winBattle();
+   },700);
+
+   return;
+
+ }
+
+ setTimeout(()=>{
+   enemyAttack();
+ },700);
+
 }
 
-function enemyTurn(){
+/* =========================================================
+   敵攻撃
+========================================================= */
 
-  if(!state.battle) return;
+function enemyAttack(){
 
-  const b=state.battle;
-  const player=state.party[b.playerIndex];
-  const enemy=b.enemy;
+ const battle=state.battle;
 
-  if(player.hp<=0){
-    chooseNextMonster();
-    return;
-  }
+ if(!battle) return;
 
-  const damage=
-    Math.max(
-      1,
-      enemy.atk+
-      Math.floor(Math.random()*7)
-    );
+ const player=
+   state.party[battle.playerIndex];
 
-  player.hp=clamp(
-    player.hp-damage,
-    0,
-    player.maxHp
-  );
+ const enemy=
+   battle.enemy;
 
-  b.log=`
-    ${monsterName(enemy)}の攻撃！
-    ${damage}ダメージ！
-  `;
+ const damage=
+   enemy.atk+
+   Math.floor(Math.random()*5);
 
-  if(player.hp<=0){
-    b.log+=`<br>${monsterName(player)}は倒れた！`;
-    chooseNextMonster();
-    return;
-  }
+ player.hp=
+   Math.max(
+     0,
+     player.hp-damage
+   );
 
-  render();
+ setBattleText(
+   `野生の${getMonsterName(enemy)}の攻撃！ ${damage}ダメージ！`
+ );
+
+ renderBattle();
+
+ if(player.hp<=0){
+
+   setTimeout(()=>{
+     playerDefeated();
+   },700);
+
+ }
+
 }
 
-function chooseNextMonster(){
-
-  const alive=state.party
-    .map((m,i)=>m.hp>0?i:-1)
-    .filter(i=>i>=0);
-
-  if(alive.length===0){
-
-    setTimeout(()=>{
-      state.party.forEach(m=>m.hp=m.maxHp);
-      state.location={x:3,y:5,city:0};
-      state.battle=null;
-      screenMode="map";
-      alert("パチモンが全員倒れた！\nパチモンセンターまで戻された！");
-      saveSilent();
-      render();
-    },500);
-
-    return;
-  }
-
-  openModal(`
-    <h2>パチモンを選んでください</h2>
-
-    ${alive.map(i=>{
-      const m=state.party[i];
-      const d=monsterData(m.id);
-
-      return `
-        <button class="main"
-          onclick="switchBattleMonster(${i})">
-          ${d.icon} ${d.name}
-          Lv.${m.level}
-          HP ${m.hp}/${m.maxHp}
-        </button>
-      `;
-    }).join("")}
-  `);
-}
-
-function switchBattleMonster(index){
-
-  state.battle.playerIndex=index;
-  state.battle.log=
-    `${monsterName(state.party[index])}に交代した！`;
-
-  closeModal();
-  render();
-}
+/* =========================================================
+   勝利
+========================================================= */
 
 function winBattle(){
 
-  const b=state.battle;
-  const player=state.party[b.playerIndex];
-  const enemy=b.enemy;
+ const battle=state.battle;
 
-  const gained=20+enemy.level*5;
+ const enemy=battle.enemy;
 
-  player.exp+=gained;
+ const player=
+   state.party[battle.playerIndex];
 
-  b.log=`
-    野生の ${monsterName(enemy)} を倒した！
-    <br>経験値 ${gained} を獲得！
-  `;
+ const money=
+   50+
+   enemy.level*15+
+   Math.floor(Math.random()*50);
 
-  checkLevelUp(player);
+ const exp=
+   35+
+   enemy.level*8;
 
-  setTimeout(()=>{
-    state.battle=null;
-    screenMode="map";
-    saveSilent();
-    render();
-  },1200);
+ state.money+=money;
 
-  render();
+ player.exp+=exp;
+
+ const reward=
+   getBattleDrop(enemy);
+
+ let text=
+   `${getMonsterName(enemy)}を倒した！<br>`+
+   `${exp}EXP獲得！<br>`+
+   `💰 ${money}円を手に入れた！`;
+
+ if(reward){
+
+   state.items[reward]=
+     (state.items[reward]||0)+1;
+
+   text+=
+     `<br>🎁 ${ITEMS[reward].name}を手に入れた！`;
+
+ }
+
+ checkLevelUp(player);
+
+ setBattleText(text);
+
+ renderBattle();
+
+ setTimeout(()=>{
+
+   state.battle=null;
+
+   showScreen("mapScreen");
+
+   renderAll();
+
+   setMessage(
+     `${getMonsterName(player)}は戦闘に勝利した！`
+   );
+
+ },1400);
+
 }
+
+/* =========================================================
+   ドロップアイテム
+========================================================= */
+
+function getBattleDrop(enemy){
+
+ const r=Math.random();
+
+ if(r<0.10){
+   return "hyperCapsule";
+ }
+
+ if(r<0.25){
+   return "superCapsule";
+ }
+
+ if(r<0.50){
+   return "capsule";
+ }
+
+ if(r<0.75){
+   return "potion";
+ }
+
+ if(r<0.85){
+   return "superPotion";
+ }
+
+ return null;
+
+}
+
+/* =========================================================
+   レベルアップ・進化
+========================================================= */
 
 function checkLevelUp(mon){
 
-  while(mon.exp>=100){
+ while(mon.exp>=100){
 
-    mon.exp-=100;
-    mon.level++;
+   mon.exp-=100;
 
-    const d=monsterData(mon.id);
+   mon.level++;
 
-    mon.maxHp+=3;
-    mon.hp=mon.maxHp;
-    mon.atk+=2;
+   mon.maxHp+=3;
 
-    if(d.evo && mon.level>=d.evoLv){
+   mon.hp=mon.maxHp;
 
-      const oldName=d.name;
-      const newData=monsterData(d.evo);
+   mon.atk+=2;
 
-      mon.id=d.evo;
-      mon.maxHp+=15;
-      mon.hp=mon.maxHp;
-      mon.atk+=5;
+   const d=
+     monsterData(mon.id);
 
-      addDex(newData.id);
+   if(
+     d.evo &&
+     mon.level>=d.evoLv
+   ){
 
-      setTimeout(()=>{
-        alert(
-          `${oldName}は……\n`+
-          `なんと！\n`+
-          `${newData.name}に進化した！`
-        );
-      },100);
-    }
-  }
+     const oldName=d.name;
+
+     const newId=d.evo;
+
+     const newData=
+       monsterData(newId);
+
+     mon.id=newId;
+
+     /*
+       進化後の能力を少し強化
+    */
+
+     mon.maxHp=
+       Math.max(
+         mon.maxHp,
+         newData.baseHp+
+         Math.floor((mon.level-1)*2.5)
+       );
+
+     mon.atk=
+       Math.max(
+         mon.atk,
+         newData.atk+
+         Math.floor((mon.level-1)*1.3)
+       );
+
+     mon.hp=mon.maxHp;
+
+     addDex(newId);
+
+     setTimeout(()=>{
+
+       showEvolutionMessage(
+         oldName,
+         newData.name
+       );
+
+     },300);
+
+   }
+
+ }
+
 }
 
-function usePotion(){
+/* =========================================================
+   進化演出
+========================================================= */
 
-  if(state.items.potion<=0){
-    state.battle.log="傷薬を持っていない！";
-    render();
-    return;
-  }
+function showEvolutionMessage(oldName,newName){
 
-  const player=state.party[state.battle.playerIndex];
+ openModal(`
 
-  if(player.hp>=player.maxHp){
-    state.battle.log="HPは満タンだ！";
-    render();
-    return;
-  }
+   <h2>✨ 進化！</h2>
 
-  state.items.potion--;
+   <p style="font-size:20px;text-align:center">
 
-  const before=player.hp;
+     ${oldName}
+     <br>
+     ↓
+     <br>
+     <b>${newName}</b>
 
-  player.hp=clamp(
-    player.hp+ITEMS.potion.heal,
-    0,
-    player.maxHp
-  );
+   </p>
 
-  state.battle.log=
-    `傷薬を使った！<br>`+
-    `${player.hp-before}回復した！`;
+   <button
+     style="width:100%"
+     onclick="closeModal()"
+   >
+     OK
+   </button>
 
-  setTimeout(enemyTurn,600);
-  render();
+ `);
+
 }
+
+/* =========================================================
+   ひんし
+========================================================= */
+
+function playerDefeated(){
+
+ setBattleText(
+   `${getMonsterName(state.party[state.battle.playerIndex])}は倒れた！`
+ );
+
+ setTimeout(()=>{
+
+   const next=
+     firstAlive();
+
+   if(next>=0){
+
+     state.battle.playerIndex=next;
+
+     setBattleText(
+       `${getMonsterName(state.party[next])}を出した！`
+     );
+
+     renderBattle();
+
+   }else{
+
+     healParty();
+
+     state.battle=null;
+
+     showScreen("mapScreen");
+
+     renderAll();
+
+     setMessage(
+       "全員倒れてしまった……。パチモンセンターで回復しました。"
+     );
+
+   }
+
+ },800);
+
+}
+
+/* =========================================================
+   生存パチモン
+========================================================= */
+
+function firstAlive(){
+
+ return state.party.findIndex(
+   mon=>mon.hp>0
+ );
+
+}
+
+/* =========================================================
+   戦闘アイテム
+========================================================= */
+
+function battleItems(){
+
+ let html=`
+   <h2>🎒 どうぐ</h2>
+ `;
+
+ if(state.items.potion>0){
+
+   html+=`
+     <button
+       style="width:100%"
+       onclick="usePotion('potion')"
+     >
+       キズぐすり ×${state.items.potion}
+     </button>
+   `;
+
+ }
+
+ if(state.items.superPotion>0){
+
+   html+=`
+     <button
+       style="width:100%"
+       onclick="usePotion('superPotion')"
+     >
+       いいキズぐすり ×${state.items.superPotion}
+     </button>
+   `;
+
+ }
+
+ ["capsule","superCapsule","hyperCapsule"]
+ .forEach(key=>{
+
+   if(state.items[key]>0){
+
+     html+=`
+       <button
+         style="width:100%"
+         onclick="useCapsule('${key}')"
+       >
+         ${ITEMS[key].name}
+         ×${state.items[key]}
+       </button>
+     `;
+
+   }
+
+ });
+
+ html+=`
+   <button
+     style="width:100%"
+     onclick="closeModal()"
+   >
+     戻る
+   </button>
+ `;
+
+ openModal(html);
+
+}
+
+/* =========================================================
+   回復アイテム
+========================================================= */
+
+function usePotion(type){
+
+ if(state.items[type]<=0) return;
+
+ const player=
+   state.party[state.battle.playerIndex];
+
+ if(player.hp<=0){
+
+   alert("ひんし状態では使えません。");
+
+   return;
+
+ }
+
+ if(player.hp>=player.maxHp){
+
+   alert("HPは満タンです。");
+
+   return;
+
+ }
+
+ const item=ITEMS[type];
+
+ state.items[type]--;
+
+ const before=player.hp;
+
+ player.hp=
+   Math.min(
+     player.maxHp,
+     player.hp+item.heal
+   );
+
+ const heal=
+   player.hp-before;
+
+ closeModal();
+
+ setBattleText(
+   `${item.name}を使った！ HPが${heal}回復した！`
+ );
+
+ renderBattle();
+
+ setTimeout(()=>{
+   enemyAttack();
+ },600);
+
+}
+
+/* =========================================================
+   捕獲
+========================================================= */
 
 function useCapsule(type){
 
-  if(state.items[type]<=0){
-    state.battle.log="そのカプセルを持っていない！";
-    render();
-    return;
-  }
+ if(state.items[type]<=0) return;
 
-  state.items[type]--;
+ const battle=state.battle;
 
-  const enemy=state.battle.enemy;
-  const data=ITEMS[type];
+ const enemy=battle.enemy;
 
-  let hpBonus=
-    1-(enemy.hp/enemy.maxHp)*0.5;
+ const player=
+   state.party[battle.playerIndex];
 
-  let chance=
-    0.30*
-    data.rate*
-    hpBonus;
+ if(state.party.length>=4){
 
-  chance=clamp(chance,0.05,0.95);
+   alert(
+     "手持ちが4匹なので捕まえられません。BOXに送る機能は次回のボタンから対応できます。"
+   );
 
-  const success=Math.random()<chance;
+   return;
 
-  if(success){
+ }
 
-    const captured={
-      ...enemy
-    };
+ state.items[type]--;
 
-    addDex(captured.id);
+ const item=ITEMS[type];
 
-    if(!addToParty(captured)){
+ /*
+   HPが低いほど捕獲しやすい
+ */
 
-      state.battle.log=
-        "パチモンを捕まえた！<br>"+
-        "しかし手持ちもBOXもいっぱいだ！";
+ const hpFactor=
+   1-
+   enemy.hp/enemy.maxHp;
 
-      setTimeout(()=>{
-        state.battle=null;
-        screenMode="map";
-        render();
-      },1200);
+ const chance=
+   clamp(
+     0.12+
+     hpFactor*0.65+
+     item.rate*0.12,
+     0.05,
+     0.90
+   );
 
-      render();
-      return;
-    }
+ if(Math.random()<chance){
 
-    state.battle.log=
-      `カプセルが……<br>`+
-      `カチッ！<br>`+
-      `${monsterName(enemy)}を捕まえた！`;
+   state.party.push(enemy);
 
-    setTimeout(()=>{
-      state.battle=null;
-      screenMode="map";
-      saveSilent();
-      render();
-    },1200);
+   addDex(enemy.id);
 
-  }else{
+   closeModal();
 
-    state.battle.log=
-      `${monsterName(enemy)}はカプセルから飛び出した！`;
+   setBattleText(
+     `${item.name}が揺れて……`
+   );
 
-    setTimeout(enemyTurn,700);
-  }
+   renderBattle();
 
-  render();
+   setTimeout(()=>{
+
+     setBattleText(
+       `${getMonsterName(enemy)}を捕まえた！`
+     );
+
+   },500);
+
+   setTimeout(()=>{
+
+     state.battle=null;
+
+     showScreen("mapScreen");
+
+     renderAll();
+
+     setMessage(
+       `${getMonsterName(enemy)}が仲間になりました！`
+     );
+
+   },1300);
+
+ }else{
+
+   closeModal();
+
+   setBattleText(
+     `${item.name}から飛び出してしまった！`
+   );
+
+   renderBattle();
+
+   setTimeout(()=>{
+     enemyAttack();
+   },700);
+
+ }
+
 }
 
-function runAway(){
+/* =========================================================
+   逃げる
+========================================================= */
 
-  if(Math.random()<0.95){
+function battleRun(){
 
-    state.battle.log="うまく逃げ切った！";
+ if(Math.random()<0.95){
 
-    setTimeout(()=>{
-      state.battle=null;
-      screenMode="map";
-      render();
-    },600);
+   state.battle=null;
 
-  }else{
+   showScreen("mapScreen");
 
-    state.battle.log="逃げられない！";
+   renderAll();
 
-    setTimeout(enemyTurn,600);
-  }
+   setMessage(
+     "うまく逃げ切れた！"
+   );
 
-  render();
+ }else{
+
+   setBattleText(
+     "逃げられない！"
+   );
+
+   setTimeout(()=>{
+     enemyAttack();
+   },600);
+
+ }
+
+}
+
+/* =========================================================
+   バトルテキスト
+========================================================= */
+
+function setBattleText(text){
+
+ document.getElementById("battleText")
+   .innerHTML=text;
+
+}
+
+/* =========================================================
+   パチモンセンター
+========================================================= */
+
+function openShop(){
+
+ healParty();
+
+ renderShop();
+
+ document.getElementById("shopPanel")
+   .classList.add("active");
+
+}
+
+function renderShop(){
+
+ const area=
+   document.getElementById("shopItems");
+
+ area.innerHTML="";
+
+ Object.keys(ITEMS).forEach(key=>{
+
+   const item=ITEMS[key];
+
+   const div=
+     document.createElement("div");
+
+   div.className="shopItem";
+
+   div.innerHTML=`
+
+     <h3>${item.name}</h3>
+
+     <p class="small">
+       ${item.desc}
+     </p>
+
+     <div>
+       所持：
+       <b>${state.items[key]||0}</b>
+     </div>
+
+     <div class="price">
+       ${item.price}円
+     </div>
+
+     <button
+       onclick="buyItem('${key}')"
+     >
+       購入
+     </button>
+
+   `;
+
+   area.appendChild(div);
+
+ });
+
+}
+
+/* =========================================================
+   購入
+========================================================= */
+
+function buyItem(key){
+
+ const item=ITEMS[key];
+
+ if(state.money<item.price){
+
+   alert("お金が足りません。");
+
+   return;
+
+ }
+
+ state.money-=item.price;
+
+ state.items[key]=
+   (state.items[key]||0)+1;
+
+ renderShop();
+
+ updateHUD();
+
+}
+
+/* =========================================================
+   売却
+========================================================= */
+
+function sellItems(){
+
+ let html=`
+
+   <h2>💰 道具を売る</h2>
+
+   <p>
+     持っている道具を半額で売却できます。
+   </p>
+
+ `;
+
+ Object.keys(ITEMS).forEach(key=>{
+
+   const item=ITEMS[key];
+
+   const count=
+     state.items[key]||0;
+
+   if(count>0){
+
+     html+=`
+
+       <button
+         style="width:100%"
+         onclick="sellItem('${key}')"
+       >
+         ${item.name}
+         ×${count}
+         ／ ${item.sell}円
+       </button>
+
+     `;
+
+   }
+
+ });
+
+ html+=`
+
+   <button
+     style="width:100%"
+     onclick="closeModal()"
+   >
+     閉じる
+   </button>
+
+ `;
+
+ openModal(html);
+
+}
+
+function sellItem(key){
+
+ const item=ITEMS[key];
+
+ if(!state.items[key] ||
+    state.items[key]<=0){
+
+   return;
+
+ }
+
+ state.items[key]--;
+
+ state.money+=item.sell;
+
+ renderShop();
+
+ updateHUD();
+
+ closeModal();
+
+}
+
+/* =========================================================
+   メインメニュー
+========================================================= */
+
+function openMainMenu(){
+
+ document.getElementById("mainMenu")
+   .classList.add("active");
+
 }
 
 /* =========================================================
@@ -1645,29 +3171,169 @@ function runAway(){
 ========================================================= */
 
 function openModal(html){
-  document.getElementById("modalBox").innerHTML=html;
-  document.getElementById("modal").classList.remove("hidden");
+
+ document.getElementById("modalContent")
+   .innerHTML=html;
+
+ document.getElementById("modal")
+   .classList.add("active");
+
 }
 
 function closeModal(){
-  document.getElementById("modal").classList.add("hidden");
+
+ document.getElementById("modal")
+   .classList.remove("active");
+
+}
+
+function closeOverlays(){
+
+ document.querySelectorAll(".overlay")
+   .forEach(el=>{
+     el.classList.remove("active");
+   });
+
+}
+
+/* =========================================================
+   セーブ
+========================================================= */
+
+function saveGame(showMessage=true){
+
+ try{
+
+   localStorage.setItem(
+     "pachimonsave",
+     JSON.stringify(state)
+   );
+
+   if(showMessage){
+
+     alert("セーブしました！");
+
+   }
+
+ }catch(e){
+
+   alert("セーブに失敗しました。");
+
+ }
+
+}
+
+/* =========================================================
+   ロード
+========================================================= */
+
+function loadGame(){
+
+ try{
+
+   const saved=
+     localStorage.getItem("pachimonsave");
+
+   if(!saved) return false;
+
+   const data=
+     JSON.parse(saved);
+
+   state=data;
+
+   /*
+     古いセーブデータ対策
+   */
+
+   if(!state.boxes){
+
+     state.boxes=
+       Array.from(
+         {length:5},
+         ()=>Array(20).fill(null)
+       );
+
+   }
+
+   if(!state.items){
+
+     state.items={
+       potion:5,
+       superPotion:0,
+       capsule:5,
+       superCapsule:2,
+       hyperCapsule:1
+     };
+
+   }
+
+   if(!state.dex){
+     state.dex=[];
+   }
+
+   return true;
+
+ }catch(e){
+
+   return false;
+
+ }
+
+}
+
+/* =========================================================
+   リセット
+========================================================= */
+
+function resetGame(){
+
+ const ok=
+   confirm(
+     "リセットしますか？\nセーブデータも削除されます。"
+   );
+
+ if(!ok) return;
+
+ localStorage.removeItem(
+   "pachimonsave"
+ );
+
+ location.reload();
+
+}
+
+/* =========================================================
+   全体描画
+========================================================= */
+
+function renderAll(){
+
+ renderMap();
+
+ updateHUD();
+
 }
 
 /* =========================================================
    初期化
 ========================================================= */
 
-(function init(){
+if(loadGame()){
 
-  const loaded=loadGame();
+ showScreen("mapScreen");
 
-  if(loaded && state.started){
-    screenMode="map";
-  }
+ renderAll();
 
-  render();
+ setMessage(
+   "セーブデータを読み込みました。"
+ );
 
-})();
+}else{
+
+ showScreen("titleScreen");
+
+}
+
 </script>
 
 </body>
