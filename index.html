@@ -13,6 +13,56 @@
 <title>パチッとモンスター</title>
 
 <style>
+  
+  /* =========================================================
+   タイトルメニュー
+========================================================= */
+
+.titleMenuBtn{
+
+  width:100%;
+
+  margin:6px 0;
+
+  padding:13px;
+
+  border:3px solid #222;
+
+  border-radius:10px;
+
+  background:#fff;
+
+  color:#222;
+
+  font-weight:bold;
+
+  font-size:
+    clamp(16px,4.5vw,21px);
+
+  box-shadow:
+    0 3px 0 #333;
+
+}
+
+.titleMenuBtn:disabled{
+
+  opacity:.45;
+
+  cursor:not-allowed;
+
+  box-shadow:none;
+
+}
+
+.saveStatus{
+
+  margin:12px 0 0;
+
+  color:#666;
+
+  font-size:13px;
+
+}
 
 /* =========================================================
    基本
@@ -1403,25 +1453,75 @@ button:active{
     パチッとモンスター
   </div>
 
-  <div class="startBox">
+  <div class="startBox" id="titleMenu">
 
-    <h2>
-      最初のパチモンを選ぼう！
-    </h2>
+  <h2>
+    パチモンの世界へ！
+  </h2>
 
-    <div class="starterButtons">
+  <button
+    class="titleMenuBtn"
+    id="continueBtn"
+    onclick="continueGame()"
+  >
+    ▶ 続きから
+  </button>
 
-      <button
-        class="starterBtn"
-        onclick="chooseStarter(1)"
-      >
-        <span class="icon">🐣</span>
-        ピヨカラ
-      </button>
+  <button
+    class="titleMenuBtn"
+    onclick="newGame()"
+  >
+    ▶ 初めから
+  </button>
 
-      <button
-        class="starterBtn"
-        onclick="chooseStarter(4)"
+  <p
+    id="saveStatus"
+    class="saveStatus"
+  ></p>
+
+</div>
+
+<!-- 初めから選択後のスターター選択 -->
+
+<div
+  class="startBox"
+  id="starterSelect"
+  style="display:none"
+>
+
+  <h2>
+    最初のパチモンを選ぼう！
+  </h2>
+
+  <div class="starterButtons">
+
+    <button
+      class="starterBtn"
+      onclick="chooseStarter(1)"
+    >
+      <span class="icon">🐣</span>
+      ピヨカラ
+    </button>
+
+    <button
+      class="starterBtn"
+      onclick="chooseStarter(4)"
+    >
+      <span class="icon">🐶</span>
+      イヌヌワン
+    </button>
+
+    <button
+      class="starterBtn"
+      onclick="chooseStarter(7)"
+    >
+      <span class="icon">🐱</span>
+      ネココネコ
+    </button>
+
+  </div>
+
+</div>
       >
         <span class="icon">🐶</span>
         イヌヌワン
@@ -3719,6 +3819,8 @@ function startWildBattle(){
    "battleScreen"
  );
 
+  startBGM("battle");
+
  renderBattle();
 
  setBattleText(
@@ -4298,6 +4400,8 @@ function winBattle(){
      );
 
      renderAll();
+     
+     startBGM("map");
 
      setMessage(
        `${getMonsterName(player)}は戦闘に勝利した！`
@@ -4529,6 +4633,8 @@ function playerDefeated(){
        );
 
        renderAll();
+
+       startBGM("map");
 
        setMessage(
          "全員倒れてしまった……。パチモンセンターで回復しました。"
@@ -4806,6 +4912,8 @@ function useCapsule(type){
 
        renderAll();
 
+       startBGM("map");
+       
        setMessage(
          `${getMonsterName(enemy)}が仲間になりました！`
        );
@@ -4852,6 +4960,8 @@ function battleRun(){
    );
 
    renderAll();
+
+   startBGM("map");
 
    setMessage(
      "うまく逃げ切れた！"
@@ -5133,6 +5243,371 @@ function closeOverlays(){
 
 }
 
+  /* =========================================================
+   BGM
+   Web Audio APIによる8bit風BGM
+========================================================= */
+
+let audioCtx=null;
+
+let bgmGain=null;
+
+let bgmTimer=null;
+
+let bgmMode=null;
+
+let bgmToken=0;
+
+
+/* ---------------------------------------------------------
+   音階
+--------------------------------------------------------- */
+
+function midiToFreq(midi){
+
+ return 440*
+   Math.pow(
+     2,
+     (midi-69)/12
+   );
+
+}
+
+
+/* ---------------------------------------------------------
+   AudioContext準備
+--------------------------------------------------------- */
+
+function ensureAudio(){
+
+ if(!audioCtx){
+
+   const AudioContext=
+     window.AudioContext ||
+     window.webkitAudioContext;
+
+   if(!AudioContext){
+
+     return false;
+
+   }
+
+   audioCtx=
+     new AudioContext();
+
+   bgmGain=
+     audioCtx.createGain();
+
+   bgmGain.gain.value=
+     0.07;
+
+   bgmGain.connect(
+     audioCtx.destination
+   );
+
+ }
+
+ if(
+   audioCtx.state==="suspended"
+ ){
+
+   audioCtx.resume();
+
+ }
+
+ return true;
+
+}
+
+
+/* ---------------------------------------------------------
+   1音鳴らす
+--------------------------------------------------------- */
+
+function playBGMNote(
+  midi,
+  start,
+  duration,
+  volume,
+  type
+){
+
+ if(!audioCtx || !bgmGain){
+
+   return;
+
+ }
+
+ const osc=
+   audioCtx.createOscillator();
+
+ const gain=
+   audioCtx.createGain();
+
+ osc.type=
+   type || "square";
+
+ osc.frequency.value=
+   midiToFreq(midi);
+
+ gain.gain.setValueAtTime(
+   0.0001,
+   start
+ );
+
+ gain.gain.exponentialRampToValueAtTime(
+   volume,
+   start+0.015
+ );
+
+ gain.gain.exponentialRampToValueAtTime(
+   0.0001,
+   start+
+   Math.max(
+     0.02,
+     duration-0.02
+   )
+ );
+
+ osc.connect(gain);
+
+ gain.connect(bgmGain);
+
+ osc.start(start);
+
+ osc.stop(
+   start+duration
+ );
+
+}
+
+
+/* ---------------------------------------------------------
+   BGM停止
+--------------------------------------------------------- */
+
+function stopBGM(){
+
+ bgmToken++;
+
+ if(bgmTimer){
+
+   clearTimeout(
+     bgmTimer
+   );
+
+ }
+
+ bgmTimer=null;
+
+ bgmMode=null;
+
+}
+
+
+/* ---------------------------------------------------------
+   マップBGM
+--------------------------------------------------------- */
+
+const MAP_BGM={
+
+ bpm:120,
+
+ melody:[
+   72,76,79,76,
+   74,77,81,77,
+   72,76,79,84,
+   79,76,74,72
+ ],
+
+ bass:[
+   48,48,55,55,
+   50,50,57,57,
+   48,48,55,55,
+   43,43,48,48
+ ]
+
+};
+
+
+/* ---------------------------------------------------------
+   戦闘BGM
+--------------------------------------------------------- */
+
+const BATTLE_BGM={
+
+ bpm:150,
+
+ melody:[
+   76,76,79,81,
+   79,76,74,76,
+   81,81,84,86,
+   84,81,79,76
+ ],
+
+ bass:[
+   40,40,47,47,
+   43,43,50,50,
+   45,45,52,52,
+   40,40,47,47
+ ]
+
+};
+
+
+/* ---------------------------------------------------------
+   BGMループ
+--------------------------------------------------------- */
+
+function scheduleBGMLoop(
+  mode,
+  token
+){
+
+ if(
+   token!==bgmToken ||
+   bgmMode!==mode
+ ){
+
+   return;
+
+ }
+
+ if(!ensureAudio()){
+
+   return;
+
+ }
+
+ const track=
+   mode==="battle"
+     ? BATTLE_BGM
+     : MAP_BGM;
+
+ const beat=
+   60/track.bpm;
+
+ const now=
+   audioCtx.currentTime+
+   0.05;
+
+ track.melody.forEach(
+   (note,index)=>{
+
+     const start=
+       now+
+       index*beat;
+
+     playBGMNote(
+       note,
+       start,
+       beat*0.78,
+       0.055,
+       "square"
+     );
+
+   }
+ );
+
+ track.bass.forEach(
+   (note,index)=>{
+
+     const start=
+       now+
+       index*beat;
+
+     playBGMNote(
+       note,
+       start,
+       beat*0.82,
+       0.035,
+       "triangle"
+     );
+
+   }
+ );
+
+ const loopLength=
+   track.melody.length*
+   beat;
+
+ bgmTimer=
+   setTimeout(
+     ()=>{
+
+       scheduleBGMLoop(
+         mode,
+         token
+       );
+
+     },
+     (loopLength-0.08)*1000
+   );
+
+}
+
+
+/* ---------------------------------------------------------
+   BGM開始
+--------------------------------------------------------- */
+
+function startBGM(mode){
+
+ if(
+   bgmMode===mode &&
+   bgmTimer
+ ){
+
+   return;
+
+ }
+
+ if(!ensureAudio()){
+
+   return;
+
+ }
+
+ stopBGM();
+
+ bgmMode=
+   mode;
+
+ const token=
+   ++bgmToken;
+
+ scheduleBGMLoop(
+   mode,
+   token
+ );
+
+}
+
+
+/* ---------------------------------------------------------
+   現在の画面に合わせてBGM
+--------------------------------------------------------- */
+
+function startBGMForCurrentScreen(){
+
+ if(
+   state.battle
+ ){
+
+   startBGM(
+     "battle"
+   );
+
+ }else{
+
+   startBGM(
+     "map"
+   );
+
+ }
+
+}
+  
 /* =========================================================
    セーブ
 ========================================================= */
@@ -5143,10 +5618,10 @@ function saveGame(
 
  try{
 
-   localStorage.setItem(
-     "pachimonsave",
-     JSON.stringify(state)
-   );
+localStorage.setItem(
+  SAVE_KEY,
+  JSON.stringify(state)
+);
 
    if(showMessage){
 
@@ -5177,9 +5652,9 @@ function loadGame(){
  try{
 
    const saved=
-     localStorage.getItem(
-       "pachimonsave"
-     );
+   localStorage.getItem(
+  SAVE_KEY
+);
 
    if(!saved){
 
@@ -5327,9 +5802,9 @@ function resetGame(){
 
  if(!ok) return;
 
- localStorage.removeItem(
-   "pachimonsave"
- );
+  localStorage.removeItem(
+  SAVE_KEY
+);
 
  location.reload();
 
@@ -5348,12 +5823,114 @@ function renderAll(){
 }
 
 /* =========================================================
-   初期化
+   タイトル画面・セーブ管理
 ========================================================= */
 
-if(
-  loadGame()
-){
+const SAVE_KEY="pachimonsave";
+
+/* ---------------------------------------------------------
+   セーブデータが存在するか
+--------------------------------------------------------- */
+
+function hasSaveData(){
+
+ try{
+
+   return !!localStorage.getItem(
+     SAVE_KEY
+   );
+
+ }catch(e){
+
+   return false;
+
+ }
+
+}
+
+/* ---------------------------------------------------------
+   タイトル画面表示
+--------------------------------------------------------- */
+
+function showTitle(){
+
+ closeOverlays();
+
+ stopBGM();
+
+ showScreen(
+   "titleScreen"
+ );
+
+ const continueBtn=
+   document.getElementById(
+     "continueBtn"
+   );
+
+ const saveStatus=
+   document.getElementById(
+     "saveStatus"
+   );
+
+ const titleMenu=
+   document.getElementById(
+     "titleMenu"
+   );
+
+ const starterSelect=
+   document.getElementById(
+     "starterSelect"
+   );
+
+ titleMenu.style.display="block";
+
+ starterSelect.style.display="none";
+
+ if(hasSaveData()){
+
+   continueBtn.disabled=false;
+
+   saveStatus.textContent=
+     "セーブデータがあります。";
+
+ }else{
+
+   continueBtn.disabled=true;
+
+   saveStatus.textContent=
+     "セーブデータがありません。";
+
+ }
+
+}
+
+/* ---------------------------------------------------------
+   続きから
+--------------------------------------------------------- */
+
+function continueGame(){
+
+ if(!hasSaveData()){
+
+   alert(
+     "セーブデータがありません。"
+   );
+
+   return;
+
+ }
+
+ if(!loadGame()){
+
+   alert(
+     "セーブデータを読み込めませんでした。"
+   );
+
+   return;
+
+ }
+
+ state.started=true;
 
  showScreen(
    "mapScreen"
@@ -5365,11 +5942,95 @@ if(
    "セーブデータを読み込みました。"
  );
 
-}else{
+ startBGMForCurrentScreen();
 
- showScreen(
-   "titleScreen"
- );
+}
+
+/* ---------------------------------------------------------
+   初めから
+--------------------------------------------------------- */
+
+function newGame(){
+
+ if(hasSaveData()){
+
+   const ok=
+     confirm(
+       "セーブをすると前回のセーブが消えますが、よろしいですか？"
+     );
+
+   if(!ok){
+
+     return;
+
+   }
+
+   localStorage.removeItem(
+     SAVE_KEY
+   );
+
+ }
+
+ /* -------------------------------------------------------
+    新規ゲーム用に完全初期化
+ ------------------------------------------------------- */
+
+ state={
+
+   started:false,
+
+   playerName:"パチモン研究員",
+
+   map:0,
+
+   x:5,
+
+   y:6,
+
+   party:[],
+
+   boxes:Array.from(
+     {length:5},
+     ()=>Array(20).fill(null)
+   ),
+
+   dex:[],
+
+   items:{
+     potion:5,
+     superPotion:0,
+     capsule:5,
+     superCapsule:2,
+     hyperCapsule:1
+   },
+
+   money:1000,
+
+   steps:0,
+
+   battle:null
+
+ };
+
+ currentBox=0;
+
+ closeOverlays();
+
+ stopBGM();
+
+ const titleMenu=
+   document.getElementById(
+     "titleMenu"
+   );
+
+ const starterSelect=
+   document.getElementById(
+     "starterSelect"
+   );
+
+ titleMenu.style.display="none";
+
+ starterSelect.style.display="block";
 
 }
 
